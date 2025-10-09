@@ -1,0 +1,276 @@
+@import 'tailwindcss';
+
+:root {
+  /* CD Baby 2025 Brand Colors */
+  --cdbaby-light-blue: #52bcd6;
+  --cdbaby-white: #ffffff;
+  --cdbaby-black: #000000;
+  --cdbaby-green: #7fc832;
+  --cdbaby-yellow: #ffd71c;
+  --cdbaby-red: #b4012d;
+  --cdbaby-dark-gray: #737373;
+  --cdbaby-light-gray: #f2f2f2;
+  --cdbaby-gray: #e0e0e0;
+  --cdbaby-dark-blue: #031c9b;
+  --cdbaby-burgundy: #6a003a;
+  --cdbaby-dark-orange: #f33126;
+  --cdbaby-dark-green: #005248;
+  --cdbaby-purple: #606bf8;
+  --cdbaby-orange: #ff8100;
+  --cdbaby-pink: #ff386a;
+  --cdbaby-light-green: #89ff9a;
+  --cdbaby-medium-gray: #a4a4a4;
+
+  /* Theme Variables */
+  --foreground: var(--cdbaby-black);
+  --background: var(--cdbaby-white);
+  --primary: var(--cdbaby-light-blue);
+  --primary-foreground: var(--cdbaby-white);
+  --secondary: var(--cdbaby-light-gray);
+  --secondary-foreground: var(--cdbaby-black);
+  --accent: var(--cdbaby-green);
+  --accent-foreground: var(--cdbaby-white);
+  --destructive: var(--cdbaby-red);
+  --destructive-foreground: var(--cdbaby-white);
+  --muted: var(--cdbaby-gray);
+  --muted-foreground: var(--cdbaby-dark-gray);
+  --border: var(--cdbaby-gray);
+  --input: var(--cdbaby-light-gray);
+  --ring: var(--cdbaby-light-blue);
+  --card: var(--cdbaby-white);
+  --card-foreground: var(--cdbaby-black);
+  --popover: var(--cdbaby-white);
+  --popover-foreground: var(--cdbaby-black);
+  --radius: 0.5rem;
+
+  /* Form-specific variables */
+  --form-background: #f2f2f2;
+  --form-background-hover: #e0e0e0;
+  --form-background-focus: #ffffff;
+  --form-background-disabled: #e0e0e0;
+  --form-text: #000000;
+
+  /* Picker-specific variables */
+  --picker-background: #e6e6e6;
+
+  /* Switch component variables */
+  --switch-track-background: var(--cdbaby-gray);
+  --switch-track-background-checked: var(--cdbaby-dark-blue);
+  --switch-track-background-disabled: var(--cdbaby-light-gray);
+  --switch-thumb-background: var(--cdbaby-white);
+  --switch-thumb-background-disabled: var(--cdbaby-medium-gray);
+  --switch-thumb-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --switch-focus-ring: var(--cdbaby-light-blue);
+
+  /* Waveform-specific variables */
+  --waveform-bar-background: #888888;
+}
+
+/* System theme detection for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground: var(--cdbaby-white);
+    --background: var(--cdbaby-black);
+    --primary: var(--cdbaby-light-blue);
+    --primary-foreground: var(--cdbaby-black);
+    --secondary: var(--cdbaby-dark-gray);
+    --secondary-foreground: var(--cdbaby-white);
+    --accent: var(--cdbaby-green);
+    --accent-foreground: var(--cdbaby-black);
+    --muted: var(--cdbaby-dark-gray);
+    --muted-foreground: var(--cdbaby-light-gray);
+    --border: var(--cdbaby-dark-gray);
+    --input: var(--cdbaby-dark-gray);
+    --card: var(--cdbaby-black);
+    --card-foreground: var(--cdbaby-white);
+    --popover: var(--cdbaby-black);
+    --popover-foreground: var(--cdbaby-white);
+
+    /* Dark theme form variables */
+    --form-background: #262626;
+    --form-background-hover: #595959;
+    --form-background-focus: #404040;
+    --form-background-disabled: #4a4a4a;
+    --form-text: #ffffff;
+
+    /* Dark theme picker variables */
+    --picker-background: #262626;
+
+    /* Dark theme switch variables */
+    --switch-track-background: var(--cdbaby-dark-gray);
+    --switch-track-background-checked: var(--cdbaby-dark-blue);
+    --switch-track-background-disabled: var(--cdbaby-medium-gray);
+    --switch-thumb-background: var(--cdbaby-white);
+    --switch-thumb-background-disabled: var(--cdbaby-gray);
+
+    /* Waveform-specific variables */
+    --waveform-bar-background: #5c5c5c;
+  }
+}
+
+/* Class-based theme overrides for manual selection (used by next-themes and Storybook) */
+.dark {
+  --foreground: var(--cdbaby-white);
+  --background: var(--cdbaby-black);
+  --primary: var(--cdbaby-light-blue);
+  --primary-foreground: var(--cdbaby-black);
+  --secondary: var(--cdbaby-dark-gray);
+  --secondary-foreground: var(--cdbaby-white);
+  --accent: var(--cdbaby-green);
+  --accent-foreground: var(--cdbaby-black);
+  --muted: var(--cdbaby-dark-gray);
+  --muted-foreground: var(--cdbaby-light-gray);
+  --border: var(--cdbaby-dark-gray);
+  --input: var(--cdbaby-dark-gray);
+  --card: var(--cdbaby-black);
+  --card-foreground: var(--cdbaby-white);
+  --popover: var(--cdbaby-black);
+  --popover-foreground: var(--cdbaby-white);
+
+  /* Dark theme form variables */
+  --form-background: #262626;
+  --form-background-hover: #595959;
+  --form-background-focus: #404040;
+  --form-background-disabled: #4a4a4a;
+  --form-text: #ffffff;
+
+  /* Dark theme picker variables */
+  --picker-background: #262626;
+
+  /* Dark theme switch variables */
+  --switch-track-background: var(--cdbaby-dark-gray);
+  --switch-track-background-checked: var(--cdbaby-dark-blue);
+  --switch-track-background-disabled: var(--cdbaby-medium-gray);
+  --switch-thumb-background: var(--cdbaby-white);
+  --switch-thumb-background-disabled: var(--cdbaby-gray);
+
+  /* Waveform-specific variables */
+  --waveform-bar-background: #5c5c5c;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-test-national-2), Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .bg-background {
+    background-color: var(--background);
+  }
+
+  .text-foreground {
+    color: var(--foreground);
+  }
+
+  .bg-primary {
+    background-color: var(--primary);
+  }
+
+  .text-primary-foreground {
+    color: var(--primary-foreground);
+  }
+
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+
+  .text-secondary-foreground {
+    color: var(--secondary-foreground);
+  }
+
+  .bg-destructive {
+    background-color: var(--destructive);
+  }
+
+  .text-destructive-foreground {
+    color: var(--destructive-foreground);
+  }
+
+  .bg-muted {
+    background-color: var(--muted);
+  }
+
+  .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+
+  .bg-accent {
+    background-color: var(--accent);
+  }
+
+  .text-accent-foreground {
+    color: var(--accent-foreground);
+  }
+
+  .bg-popover {
+    background-color: var(--popover);
+  }
+
+  .text-popover-foreground {
+    color: var(--popover-foreground);
+  }
+
+  .bg-card {
+    background-color: var(--card);
+  }
+
+  .text-card-foreground {
+    color: var(--card-foreground);
+  }
+
+  .border-border {
+    border-color: var(--border);
+  }
+
+  .bg-form-background {
+    background-color: var(--form-background);
+  }
+
+  .bg-picker-background {
+    background-color: var(--picker-background);
+  }
+
+  .border-primary {
+    border-color: var(--primary);
+  }
+
+  .bg-switch-track {
+    background-color: var(--switch-track-background);
+  }
+
+  .bg-switch-track-checked {
+    background-color: var(--switch-track-background-checked);
+  }
+
+  .bg-switch-track-disabled {
+    background-color: var(--switch-track-background-disabled);
+  }
+
+  .bg-switch-thumb {
+    background-color: var(--switch-thumb-background);
+  }
+
+  .bg-switch-thumb-disabled {
+    background-color: var(--switch-thumb-background-disabled);
+  }
+
+  /* Switch state-specific styling */
+  .switch-root[data-state='checked'] {
+    background-color: var(--switch-track-background-checked) !important;
+  }
+
+  .switch-root[data-state='unchecked'] {
+    background-color: var(--switch-track-background) !important;
+  }
+
+  /* Chrome, Safari and Opera */
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hidden {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+}
