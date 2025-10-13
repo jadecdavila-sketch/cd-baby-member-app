@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
   eslint: {
     dirs: ['src/api', 'src/app', 'src/modules', 'src/shared'],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+      },
+    ],
+  },
   async rewrites() {
     return {
       beforeFiles: [],
