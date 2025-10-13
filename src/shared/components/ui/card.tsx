@@ -5,13 +5,14 @@ import { cn } from '@/shared/utils/index';
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'bg-card text-card-foreground rounded-xl border shadow',
+      'text-card-foreground rounded-xl shadow',
       className
     )}
+    style={{ backgroundColor: '#262626', ...style }}
     {...props}
   />
 ));
@@ -32,12 +33,14 @@ CardHeader.displayName = 'CardHeader';
 const CardTitle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('leading-none font-semibold tracking-tight', className)}
+    className={cn('leading-none font-bold tracking-tight uppercase font-[var(--font-test-national-2-narrow)]', className)}
     {...props}
-  />
+  >
+    {typeof children === 'string' ? children.toUpperCase() : children}
+  </div>
 ));
 CardTitle.displayName = 'CardTitle';
 
