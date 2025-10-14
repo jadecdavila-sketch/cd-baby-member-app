@@ -28,11 +28,14 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+     - name: Install dependencies
+  run: npm ci
 
-      - name: Build with Next.js
-        run: npm run build
+- name: Remove API routes for static export
+  run: rm -rf src/app/api
+
+- name: Build with Next.js
+  run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
