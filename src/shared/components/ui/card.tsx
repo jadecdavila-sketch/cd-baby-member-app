@@ -8,10 +8,7 @@ const Card = React.forwardRef<
 >(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      'text-card-foreground rounded-xl shadow',
-      className
-    )}
+    className={cn('text-card-foreground rounded-[3px] shadow', className)}
     style={{ backgroundColor: '#262626', ...style }}
     {...props}
   />
@@ -36,7 +33,10 @@ const CardTitle = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('leading-none font-bold tracking-tight uppercase font-[var(--font-test-national-2-narrow)]', className)}
+    className={cn(
+      'leading-none font-[var(--font-test-national-2-narrow)] font-bold tracking-tight uppercase',
+      className
+    )}
     {...props}
   >
     {typeof children === 'string' ? children.toUpperCase() : children}

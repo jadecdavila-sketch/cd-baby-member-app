@@ -2,12 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Globe, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/shadcn/button';
-import type { GeographicData, MetricType } from '../mock-data';
-import { getMetricLabel, formatNumber } from '../mock-data';
 import { scaleLinear } from 'd3-scale';
 import { interpolateRgb } from 'd3-interpolate';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/shadcn/button';
+
+import type { GeographicData, MetricType } from '../mock-data';
+import { getMetricLabel, formatNumber } from '../mock-data';
 
 interface GeographicMapProps {
   data: GeographicData[];
@@ -21,7 +28,13 @@ export function GeographicMap({ data }: GeographicMapProps) {
     setIsMounted(true);
   }, []);
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views', 'likes', 'shares'];
+  const metricOptions: MetricType[] = [
+    'streams',
+    'creations',
+    'views',
+    'likes',
+    'shares',
+  ];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -59,13 +72,13 @@ export function GeographicMap({ data }: GeographicMapProps) {
 
   // Create color intensity based on value
   const getColorIntensity = (value: number) => {
-    const intensity = (value / maxValue);
+    const intensity = value / maxValue;
     return intensity;
   };
 
   // Map country codes to data
   const countryDataMap = new Map(
-    data.map(country => [country.countryCode.toUpperCase(), country])
+    data.map((country) => [country.countryCode.toUpperCase(), country])
   );
 
   return (
@@ -76,15 +89,21 @@ export function GeographicMap({ data }: GeographicMapProps) {
             <Globe className="h-5 w-5" />
             <CardTitle>Geographic Performance</CardTitle>
           </div>
-          <div className="inline-flex rounded-lg border border-border overflow-hidden flex-shrink-0">
+          <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
             {metricOptions.map((metric) => (
               <button
                 key={metric}
                 onClick={() => setSelectedMetric(metric)}
-                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border last:border-r-0 whitespace-nowrap"
+                className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
                 style={{
-                  backgroundColor: selectedMetric === metric ? getColor(metric) : 'transparent',
-                  color: selectedMetric === metric ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor:
+                    selectedMetric === metric
+                      ? getColor(metric)
+                      : 'transparent',
+                  color:
+                    selectedMetric === metric
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.7)',
                 }}
               >
                 {getMetricLabel(metric)}
@@ -99,7 +118,7 @@ export function GeographicMap({ data }: GeographicMapProps) {
           <img
             src="/world-map.jpg"
             alt="World Map"
-            className="w-full h-auto rounded"
+            className="h-auto w-full rounded"
           />
         </div>
 
@@ -108,10 +127,12 @@ export function GeographicMap({ data }: GeographicMapProps) {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b text-left text-sm font-medium text-muted-foreground">
+                <tr className="text-muted-foreground border-b text-left text-sm font-medium">
                   <th className="pb-2">Rank</th>
                   <th className="pb-2">Country</th>
-                  <th className="pb-2 text-right">{getMetricLabel(selectedMetric)}</th>
+                  <th className="pb-2 text-right">
+                    {getMetricLabel(selectedMetric)}
+                  </th>
                   <th className="pb-2 text-right">% of Total</th>
                 </tr>
               </thead>
@@ -127,16 +148,18 @@ export function GeographicMap({ data }: GeographicMapProps) {
                   return (
                     <tr
                       key={`ssr-${country.countryCode}`}
-                      className="border-b transition-colors hover:bg-muted/50"
+                      className="hover:bg-muted/50 border-b transition-colors"
                     >
                       <td className="py-3 text-sm font-medium">#{index + 1}</td>
                       <td className="py-3">
-                        <span className="text-sm font-medium">{country.country}</span>
+                        <span className="text-sm font-medium">
+                          {country.country}
+                        </span>
                       </td>
                       <td className="py-3 text-right text-sm font-bold">
                         {formatNumber(value)}
                       </td>
-                      <td className="py-3 text-right text-sm text-muted-foreground">
+                      <td className="text-muted-foreground py-3 text-right text-sm">
                         {percentage}%
                       </td>
                     </tr>
@@ -149,10 +172,12 @@ export function GeographicMap({ data }: GeographicMapProps) {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b text-left text-sm font-medium text-muted-foreground">
+                <tr className="text-muted-foreground border-b text-left text-sm font-medium">
                   <th className="pb-2">Rank</th>
                   <th className="pb-2">Country</th>
-                  <th className="pb-2 text-right">{getMetricLabel(selectedMetric)}</th>
+                  <th className="pb-2 text-right">
+                    {getMetricLabel(selectedMetric)}
+                  </th>
                   <th className="pb-2 text-right">% of Total</th>
                 </tr>
               </thead>
@@ -168,7 +193,7 @@ export function GeographicMap({ data }: GeographicMapProps) {
                   return (
                     <tr
                       key={country.countryCode}
-                      className="border-b transition-colors hover:bg-muted/50"
+                      className="hover:bg-muted/50 border-b transition-colors"
                     >
                       <td className="py-3 text-sm font-medium">#{index + 1}</td>
                       <td className="py-3">
@@ -176,13 +201,15 @@ export function GeographicMap({ data }: GeographicMapProps) {
                           <span className="text-xl">
                             {getFlagEmoji(country.countryCode)}
                           </span>
-                          <span className="text-sm font-medium">{country.country}</span>
+                          <span className="text-sm font-medium">
+                            {country.country}
+                          </span>
                         </div>
                       </td>
                       <td className="py-3 text-right text-sm font-bold">
                         {formatNumber(value)}
                       </td>
-                      <td className="py-3 text-right text-sm text-muted-foreground">
+                      <td className="text-muted-foreground py-3 text-right text-sm">
                         {percentage}%
                       </td>
                     </tr>

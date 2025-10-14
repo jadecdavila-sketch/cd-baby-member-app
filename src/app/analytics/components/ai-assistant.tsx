@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { MessageCircle, Send, X, Sparkles } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
 import { Input } from '@/shared/components/shadcn/input';
 
@@ -19,7 +25,8 @@ export function AIAssistant() {
     {
       id: '1',
       type: 'assistant',
-      content: "Hey! I'm BeatBuddy, your analytics assistant. Ask me anything about your music's performance, like 'Why did my streams spike last week?' or 'Which country should I target next?'",
+      content:
+        "Hey! I'm BeatBuddy, your analytics assistant. Ask me anything about your music's performance, like 'Why did my streams spike last week?' or 'Which country should I target next?'",
       timestamp: new Date(),
     },
   ]);
@@ -51,7 +58,7 @@ export function AIAssistant() {
           'Based on your data, your Spotify streams decreased by 15% last week. This coincided with the end of your playlist feature on "Summer Vibes" (2.4M followers). Consider reaching out to curators for similar playlists or running a Show.co campaign to regain momentum.',
         'country target':
           "Brazil shows the strongest growth (+67% week-over-week), especially on Instagram Reels. I'd recommend targeting Brazil with localized content and potentially translating your bio. Want me to help you set up a Show.co campaign?",
-        'tiktok':
+        tiktok:
           'Your TikTok creations are up 24% this week! To boost further: 1) Engage with top creators using your sound, 2) Create a TikTok challenge, 3) Share behind-the-scenes content. Your track "Midnight Drive" is resonating - capitalize on it!',
         'reels shorts':
           'Great question! "Ocean Waves" performs 32% better on Shorts (avg 45K views) vs Reels (34K views), while "City Lights" crushes it on Reels (+28% engagement). The slower tempo works better for Shorts, faster beats for Reels.',
@@ -100,7 +107,7 @@ export function AIAssistant() {
           'Based on your data, your Spotify streams decreased by 15% last week. This coincided with the end of your playlist feature on "Summer Vibes" (2.4M followers). Consider reaching out to curators for similar playlists or running a Show.co campaign to regain momentum.',
         'country target':
           "Brazil shows the strongest growth (+67% week-over-week), especially on Instagram Reels. I'd recommend targeting Brazil with localized content and potentially translating your bio. Want me to help you set up a Show.co campaign?",
-        'tiktok':
+        tiktok:
           'Your TikTok creations are up 24% this week! To boost further: 1) Engage with top creators using your sound, 2) Create a TikTok challenge, 3) Share behind-the-scenes content. Your track "Midnight Drive" is resonating - capitalize on it!',
         'reels shorts':
           'Great question! "Ocean Waves" performs 32% better on Shorts (avg 45K views) vs Reels (34K views), while "City Lights" crushes it on Reels (+28% engagement). The slower tempo works better for Shorts, faster beats for Reels.',
@@ -134,7 +141,7 @@ export function AIAssistant() {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
+        className="fixed right-6 bottom-6 h-14 w-14 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
         style={{ backgroundColor: 'var(--cdbaby-purple)' }}
       >
         <MessageCircle className="h-6 w-6" />
@@ -143,7 +150,7 @@ export function AIAssistant() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 z-50 w-[400px] shadow-2xl animate-in slide-in-from-bottom-5">
+    <Card className="animate-in slide-in-from-bottom-5 fixed right-6 bottom-6 z-50 w-[400px] shadow-2xl">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="flex items-center gap-2 text-lg">
           <div className="rounded-lg bg-[var(--cdbaby-purple)]/10 p-2">
@@ -184,7 +191,7 @@ export function AIAssistant() {
         {/* Suggested Questions */}
         {messages.length <= 1 && (
           <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium">
               Try asking:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -193,7 +200,7 @@ export function AIAssistant() {
                   key={index}
                   variant="outline"
                   size="sm"
-                  className="h-auto min-h-[2.5rem] whitespace-normal text-left text-xs py-2 px-3"
+                  className="h-auto min-h-[2.5rem] px-3 py-2 text-left text-xs whitespace-normal"
                   onClick={() => handleSuggestedQuestion(question)}
                 >
                   {question}
@@ -216,7 +223,7 @@ export function AIAssistant() {
             onClick={handleSendMessage}
             disabled={!input.trim()}
             size="icon"
-            className="flex-shrink-0 w-10"
+            className="w-10 flex-shrink-0"
             style={{ backgroundColor: 'var(--cdbaby-purple)' }}
           >
             <Send className="h-4 w-4" />

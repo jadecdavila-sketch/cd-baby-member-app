@@ -1,7 +1,17 @@
 'use client';
 
-import { ArrowDown, ArrowUp, Music, Heart, Eye, Share2, Sparkles } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  Music,
+  Heart,
+  Eye,
+  Share2,
+  Sparkles,
+} from 'lucide-react';
+
 import { Card, CardContent } from '@/shared/components/ui/card';
+
 import { formatNumber, getMetricLabel, type KPI } from '../mock-data';
 
 interface KPICardsProps {
@@ -71,7 +81,7 @@ export function KPICards({ kpis }: KPICardsProps) {
         return (
           <Card
             key={kpi.type}
-            className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            className="group relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
             <CardContent className="p-6">
               {/* Icon and Label */}
@@ -79,13 +89,13 @@ export function KPICards({ kpis }: KPICardsProps) {
                 <div className={`inline-flex rounded-lg p-2 ${bgColorClass}`}>
                   <Icon className={`h-5 w-5 ${colorClass}`} />
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-muted-foreground text-sm font-medium">
                   {getMetricLabel(kpi.type)}
                 </p>
               </div>
 
               {/* Current Value */}
-              <p className="mb-2 text-3xl font-bold font-[var(--font-test-national-2-narrow)]">
+              <p className="mb-2 text-3xl font-[var(--font-test-national-2-narrow)] font-bold">
                 {formatNumber(kpi.current)}
               </p>
 
@@ -105,7 +115,9 @@ export function KPICards({ kpis }: KPICardsProps) {
                 >
                   {Math.abs(kpi.percentChange).toFixed(1)}%
                 </span>
-                <span className="text-sm text-muted-foreground">vs last period</span>
+                <span className="text-muted-foreground text-sm">
+                  vs last period
+                </span>
               </div>
 
               {/* Animated background gradient on hover */}

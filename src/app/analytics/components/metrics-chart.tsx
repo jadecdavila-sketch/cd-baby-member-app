@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card';
+
 import type { TimeSeriesDataPoint, MetricType } from '../mock-data';
 import { getMetricLabel, formatNumber } from '../mock-data';
 
@@ -12,7 +19,13 @@ interface MetricsChartProps {
 export function MetricsChart({ data }: MetricsChartProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views', 'likes', 'shares'];
+  const metricOptions: MetricType[] = [
+    'streams',
+    'creations',
+    'views',
+    'likes',
+    'shares',
+  ];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -46,20 +59,29 @@ export function MetricsChart({ data }: MetricsChartProps) {
 
     const points = data.map((point, index) => {
       const x = padding.left + (index / (data.length - 1)) * chartWidth;
-      const y = padding.top + chartHeight - ((point[selectedMetric] - minValue) / range) * chartHeight;
+      const y =
+        padding.top +
+        chartHeight -
+        ((point[selectedMetric] - minValue) / range) * chartHeight;
       return { x, y, value: point[selectedMetric], date: point.date };
     });
 
     const linePath = points
-      .map((point, index) => (index === 0 ? `M ${point.x} ${point.y}` : `L ${point.x} ${point.y}`))
+      .map((point, index) =>
+        index === 0 ? `M ${point.x} ${point.y}` : `L ${point.x} ${point.y}`
+      )
       .join(' ');
 
-    const areaPath = `${linePath} L ${points[points.length - 1].x} ${padding.top + chartHeight} L ${padding.left} ${padding.top + chartHeight} Z`;
+    const lastPoint = points[points.length - 1];
+    const areaPath = lastPoint
+      ? `${linePath} L ${lastPoint.x} ${padding.top + chartHeight} L ${padding.left} ${padding.top + chartHeight} Z`
+      : '';
 
     const yAxisSteps = 5;
     const yAxisLabels = Array.from({ length: yAxisSteps }, (_, i) => {
       const value = minValue + (range / (yAxisSteps - 1)) * i;
-      const y = padding.top + chartHeight - (i / (yAxisSteps - 1)) * chartHeight;
+      const y =
+        padding.top + chartHeight - (i / (yAxisSteps - 1)) * chartHeight;
       return { value, y };
     });
 
@@ -73,7 +95,9 @@ export function MetricsChart({ data }: MetricsChartProps) {
       yAxisLabels,
       maxValue,
       minValue,
-      avgValue: Math.round(values.reduce((sum, v) => sum + v, 0) / values.length),
+      avgValue: Math.round(
+        values.reduce((sum, v) => sum + v, 0) / values.length
+      ),
     };
   }, [data, selectedMetric]);
 
@@ -82,15 +106,21 @@ export function MetricsChart({ data }: MetricsChartProps) {
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Performance Over Time</CardTitle>
-          <div className="inline-flex rounded-lg border border-border overflow-hidden flex-shrink-0">
+          <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
             {metricOptions.map((metric) => (
               <button
                 key={metric}
                 onClick={() => setSelectedMetric(metric)}
-                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border last:border-r-0 whitespace-nowrap"
+                className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
                 style={{
-                  backgroundColor: selectedMetric === metric ? getColor(metric) : 'transparent',
-                  color: selectedMetric === metric ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor:
+                    selectedMetric === metric
+                      ? getColor(metric)
+                      : 'transparent',
+                  color:
+                    selectedMetric === metric
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.7)',
                 }}
               >
                 {getMetricLabel(metric)}
@@ -197,20 +227,30 @@ export function MetricsChart({ data }: MetricsChartProps) {
         </div>
 
         {/* Summary stats */}
-        <div className="mt-6 grid grid-cols-3 gap-4 rounded-lg p-4" style={{ backgroundColor: '#1C1C1C' }}>
+        <div
+          className="mt-6 grid grid-cols-3 gap-4 rounded-lg p-4"
+          style={{ backgroundColor: '#1C1C1C' }}
+        >
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Peak</p>
-            <p className="text-lg font-bold" style={{ color: getColor(selectedMetric) }}>
+            <p className="text-muted-foreground text-sm">Peak</p>
+            <p
+              className="text-lg font-bold"
+              style={{ color: getColor(selectedMetric) }}
+            >
               {formatNumber(chartElements.maxValue)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Lowest</p>
-            <p className="text-lg font-bold">{formatNumber(chartElements.minValue)}</p>
+            <p className="text-muted-foreground text-sm">Lowest</p>
+            <p className="text-lg font-bold">
+              {formatNumber(chartElements.minValue)}
+            </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Average</p>
-            <p className="text-lg font-bold">{formatNumber(chartElements.avgValue)}</p>
+            <p className="text-muted-foreground text-sm">Average</p>
+            <p className="text-lg font-bold">
+              {formatNumber(chartElements.avgValue)}
+            </p>
           </div>
         </div>
       </CardContent>

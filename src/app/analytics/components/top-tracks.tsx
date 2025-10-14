@@ -2,11 +2,18 @@
 
 import { useState } from 'react';
 import { Music, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import Image from 'next/image';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
+
 import type { Track, MetricType } from '../mock-data';
 import { getMetricLabel, formatNumber } from '../mock-data';
-import Image from 'next/image';
 
 interface TopTracksProps {
   tracks: Track[];
@@ -15,7 +22,13 @@ interface TopTracksProps {
 export function TopTracks({ tracks }: TopTracksProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views', 'likes', 'shares'];
+  const metricOptions: MetricType[] = [
+    'streams',
+    'creations',
+    'views',
+    'likes',
+    'shares',
+  ];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -47,15 +60,21 @@ export function TopTracks({ tracks }: TopTracksProps) {
             <Music className="h-5 w-5" />
             <CardTitle>Top Tracks</CardTitle>
           </div>
-          <div className="inline-flex rounded-lg border border-border overflow-hidden flex-shrink-0">
+          <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
             {metricOptions.map((metric) => (
               <button
                 key={metric}
                 onClick={() => setSelectedMetric(metric)}
-                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border last:border-r-0 whitespace-nowrap"
+                className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
                 style={{
-                  backgroundColor: selectedMetric === metric ? getColor(metric) : 'transparent',
-                  color: selectedMetric === metric ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor:
+                    selectedMetric === metric
+                      ? getColor(metric)
+                      : 'transparent',
+                  color:
+                    selectedMetric === metric
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.7)',
                 }}
               >
                 {getMetricLabel(metric)}
@@ -72,14 +91,14 @@ export function TopTracks({ tracks }: TopTracksProps) {
             return (
               <div
                 key={track.id}
-                className="group flex items-center gap-4 rounded-lg p-3 transition-all duration-300 hover:bg-muted/50"
+                className="group hover:bg-muted/50 flex items-center gap-4 rounded-lg p-3 transition-all duration-300"
               >
                 {/* Rank */}
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
                   {index === 0 ? (
                     <TrendingUp className="h-5 w-5 text-[var(--cdbaby-green)]" />
                   ) : (
-                    <span className="text-sm font-bold text-muted-foreground">
+                    <span className="text-muted-foreground text-sm font-bold">
                       #{index + 1}
                     </span>
                   )}
@@ -96,19 +115,22 @@ export function TopTracks({ tracks }: TopTracksProps) {
                 </div>
 
                 {/* Track Info */}
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{track.name}</p>
-                  <p className="truncate text-sm text-muted-foreground">
+                  <p className="text-muted-foreground truncate text-sm">
                     {track.artist}
                   </p>
                 </div>
 
                 {/* Metric Value */}
                 <div className="flex-shrink-0 text-right">
-                  <p className="font-bold" style={{ color: getColor(selectedMetric) }}>
+                  <p
+                    className="font-bold"
+                    style={{ color: getColor(selectedMetric) }}
+                  >
                     {formatNumber(value)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {getMetricLabel(selectedMetric)}
                   </p>
                 </div>

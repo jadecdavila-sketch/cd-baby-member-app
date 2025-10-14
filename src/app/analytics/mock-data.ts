@@ -516,7 +516,7 @@ export const mockAIInsights: AIInsight[] = [
     category: 'achievement',
     title: 'Milestone unlocked! 🎉',
     description:
-      'You just crossed 100K streams this month! You\'re in the top 15% of artists on the platform.',
+      "You just crossed 100K streams this month! You're in the top 15% of artists on the platform.",
     actionLabel: 'View resources',
     actionUrl: '#',
   },

@@ -2,22 +2,36 @@
 
 import { useState } from 'react';
 import { Video as VideoIcon, ExternalLink, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import Image from 'next/image';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
+
 import type { Video, MetricType } from '../mock-data';
 import { getMetricLabel, formatNumber } from '../mock-data';
-import Image from 'next/image';
 
 interface TopVideosProps {
   videos: Video[];
 }
 
 export function TopVideos({ videos }: TopVideosProps) {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>('creations');
+  type VideoMetricType = 'creations' | 'views' | 'likes' | 'shares';
+  const [selectedMetric, setSelectedMetric] =
+    useState<VideoMetricType>('creations');
 
-  const metricOptions: MetricType[] = ['creations', 'views', 'likes', 'shares'];
+  const metricOptions: VideoMetricType[] = [
+    'creations',
+    'views',
+    'likes',
+    'shares',
+  ];
 
-  const getColor = (metric: MetricType) => {
+  const getColor = (metric: VideoMetricType) => {
     switch (metric) {
       case 'creations':
         return 'var(--cdbaby-purple)';
@@ -75,15 +89,21 @@ export function TopVideos({ videos }: TopVideosProps) {
             <VideoIcon className="h-5 w-5" />
             <CardTitle>Top Videos</CardTitle>
           </div>
-          <div className="inline-flex rounded-lg border border-border overflow-hidden flex-shrink-0">
+          <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
             {metricOptions.map((metric) => (
               <button
                 key={metric}
                 onClick={() => setSelectedMetric(metric)}
-                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border last:border-r-0 whitespace-nowrap"
+                className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
                 style={{
-                  backgroundColor: selectedMetric === metric ? getColor(metric) : 'transparent',
-                  color: selectedMetric === metric ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor:
+                    selectedMetric === metric
+                      ? getColor(metric)
+                      : 'transparent',
+                  color:
+                    selectedMetric === metric
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.7)',
                 }}
               >
                 {getMetricLabel(metric)}
@@ -100,18 +120,18 @@ export function TopVideos({ videos }: TopVideosProps) {
             return (
               <div
                 key={video.id}
-                className="group relative overflow-hidden rounded-lg border transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                className="group relative overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 {/* Rank Badge */}
                 {index === 0 && (
-                  <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-full bg-[var(--cdbaby-green)] px-2 py-1 text-xs font-bold text-white">
+                  <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-full bg-[var(--cdbaby-green)] px-2 py-1 text-xs font-bold text-white">
                     <TrendingUp className="h-3 w-3" />
                     #1
                   </div>
                 )}
 
                 {/* Thumbnail */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
                   <Image
                     src={video.thumbnailUrl}
                     alt={video.trackName}
@@ -119,7 +139,7 @@ export function TopVideos({ videos }: TopVideosProps) {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   {/* Platform Badge */}
-                  <div className="absolute bottom-2 right-2">
+                  <div className="absolute right-2 bottom-2">
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-semibold ${getPlatformBadgeColor(video.platform)}`}
                     >
@@ -130,29 +150,24 @@ export function TopVideos({ videos }: TopVideosProps) {
 
                 {/* Video Info */}
                 <div className="p-4">
-                  <h4 className="mb-1 truncate font-semibold">{video.trackName}</h4>
-                  <p className="mb-3 truncate text-sm text-muted-foreground">
+                  <h4 className="mb-1 truncate font-semibold">
+                    {video.trackName}
+                  </h4>
+                  <p className="text-muted-foreground mb-3 truncate text-sm">
                     by {video.creator}
                   </p>
 
-                  {/* Metrics */}
-                  <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <p className="text-muted-foreground">Views</p>
-                      <p className="font-bold">{formatNumber(video.views)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Creations</p>
-                      <p className="font-bold">{formatNumber(video.creations)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Likes</p>
-                      <p className="font-bold">{formatNumber(video.likes)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Shares</p>
-                      <p className="font-bold">{formatNumber(video.shares)}</p>
-                    </div>
+                  {/* Selected Metric Value */}
+                  <div className="mb-3">
+                    <p
+                      className="text-3xl font-bold"
+                      style={{ color: getColor(selectedMetric) }}
+                    >
+                      {formatNumber(value)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {getMetricLabel(selectedMetric)}
+                    </p>
                   </div>
 
                   {/* View Video Button */}

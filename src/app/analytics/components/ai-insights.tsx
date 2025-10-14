@@ -1,8 +1,17 @@
 'use client';
 
-import { Sparkles, TrendingUp, Target, Trophy, AlertCircle, ArrowRight } from 'lucide-react';
+import {
+  Sparkles,
+  TrendingUp,
+  Target,
+  Trophy,
+  AlertCircle,
+  ArrowRight,
+} from 'lucide-react';
+
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
+
 import type { AIInsight } from '../mock-data';
 
 interface AIInsightsProps {
@@ -63,9 +72,9 @@ export function AIInsights({ insights }: AIInsightsProps) {
   return (
     <div className="space-y-4">
       {/* Section Header */}
-      <div className="flex items-center gap-2 mb-2">
+      <div className="mb-2 flex items-center gap-2">
         <Sparkles className="h-6 w-6 text-[var(--cdbaby-purple)]" />
-        <h2 className="text-2xl font-bold font-[var(--font-test-national-2-narrow)] uppercase">
+        <h2 className="text-2xl font-[var(--font-test-national-2-narrow)] font-bold uppercase">
           AI INSIGHTS
         </h2>
       </div>
@@ -79,7 +88,7 @@ export function AIInsights({ insights }: AIInsightsProps) {
           return (
             <Card
               key={insight.id}
-              className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              className="group relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <CardContent className="p-6">
                 {/* Icon and Title Row */}
@@ -91,7 +100,7 @@ export function AIInsights({ insights }: AIInsightsProps) {
                 </div>
 
                 {/* Description */}
-                <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
                   {insight.description}
                 </p>
 
@@ -100,7 +109,7 @@ export function AIInsights({ insights }: AIInsightsProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className={`w-full group/btn transition-all duration-300 ${colors.icon}`}
+                    className={`group/btn w-full transition-all duration-300 ${colors.icon}`}
                     onClick={() => {
                       if (insight.actionUrl) {
                         window.location.href = insight.actionUrl;

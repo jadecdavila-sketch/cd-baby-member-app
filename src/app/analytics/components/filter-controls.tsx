@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Calendar, ChevronDown, X } from 'lucide-react';
+
 import { Button } from '@/shared/components/shadcn/button';
 import {
   Popover,
@@ -9,6 +10,7 @@ import {
   PopoverTrigger,
 } from '@/shared/components/shadcn/popover';
 import { Card, CardContent } from '@/shared/components/ui/card';
+
 import type { TimeFrame, Artist, Release, DSP } from '../mock-data';
 
 interface FilterControlsProps {
@@ -66,7 +68,7 @@ export function FilterControls({
 
     setSelectedArtists(newSelection);
     // For now, just use the first selected artist for the parent state
-    onArtistChange(newSelection.length > 0 ? newSelection[0] : null);
+    onArtistChange(newSelection.length > 0 ? (newSelection[0] ?? null) : null);
   };
 
   const toggleRelease = (releaseId: string) => {
@@ -76,7 +78,7 @@ export function FilterControls({
 
     setSelectedReleases(newSelection);
     // For now, just use the first selected release for the parent state
-    onReleaseChange(newSelection.length > 0 ? newSelection[0] : null);
+    onReleaseChange(newSelection.length > 0 ? (newSelection[0] ?? null) : null);
   };
 
   const toggleDSP = (dsp: DSP) => {
@@ -86,7 +88,7 @@ export function FilterControls({
 
     setSelectedDSPs(newSelection);
     // For now, just use the first selected DSP for the parent state
-    onDSPChange(newSelection.length > 0 ? newSelection[0] : null);
+    onDSPChange(newSelection.length > 0 ? (newSelection[0] ?? null) : null);
   };
 
   const clearAllFilters = () => {
@@ -115,12 +117,12 @@ export function FilterControls({
       <CardContent className="p-4">
         <div className="flex items-center justify-between gap-4">
           {/* Time Frame Selector - Left Side */}
-          <div className="inline-flex rounded-lg border border-border overflow-hidden">
+          <div className="border-border inline-flex overflow-hidden rounded-lg border">
             {timeFrameOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => onTimeFrameChange(option.value)}
-                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border last:border-r-0 hover:bg-muted/50"
+                className="border-border hover:bg-muted/50 border-r px-3 py-1.5 text-sm font-medium transition-all duration-200 last:border-r-0"
                 style={{
                   backgroundColor:
                     timeFrame === option.value ? '#52bcd6' : 'transparent',
@@ -137,218 +139,227 @@ export function FilterControls({
 
           {/* Filter Chips - Right Side */}
           <div className="flex items-center gap-2">
-          {/* Artist Filter Chip */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 gap-2"
-                style={{
-                  backgroundColor:
-                    selectedArtists.length > 0 ? '#606bf8' : 'transparent',
-                  color:
-                    selectedArtists.length > 0 ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  borderColor: selectedArtists.length > 0 ? '#606bf8' : undefined,
-                }}
-              >
-                Artists
-                {selectedArtists.length > 0 && (
-                  <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
-                    {selectedArtists.length}
-                  </span>
-                )}
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-2" align="start">
-              <div className="space-y-1 max-h-64 overflow-y-auto">
-                {artists.map((artist) => (
-                  <button
-                    key={artist.id}
-                    onClick={() => toggleArtist(artist.id)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
-                  >
-                    <div
-                      className="h-4 w-4 rounded border flex items-center justify-center flex-shrink-0"
-                      style={{
-                        backgroundColor: selectedArtists.includes(artist.id)
-                          ? '#606bf8'
-                          : 'transparent',
-                        borderColor: selectedArtists.includes(artist.id)
-                          ? '#606bf8'
-                          : 'rgba(255, 255, 255, 0.3)',
-                      }}
+            {/* Artist Filter Chip */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2"
+                  style={{
+                    backgroundColor:
+                      selectedArtists.length > 0 ? '#606bf8' : 'transparent',
+                    color:
+                      selectedArtists.length > 0
+                        ? 'white'
+                        : 'rgba(255, 255, 255, 0.7)',
+                    borderColor:
+                      selectedArtists.length > 0 ? '#606bf8' : undefined,
+                  }}
+                >
+                  Artists
+                  {selectedArtists.length > 0 && (
+                    <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
+                      {selectedArtists.length}
+                    </span>
+                  )}
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-2" align="start">
+                <div className="max-h-64 space-y-1 overflow-y-auto">
+                  {artists.map((artist) => (
+                    <button
+                      key={artist.id}
+                      onClick={() => toggleArtist(artist.id)}
+                      className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors"
                     >
-                      {selectedArtists.includes(artist.id) && (
-                        <svg
-                          className="h-3 w-3 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <span>{artist.name}</span>
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+                      <div
+                        className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                        style={{
+                          backgroundColor: selectedArtists.includes(artist.id)
+                            ? '#606bf8'
+                            : 'transparent',
+                          borderColor: selectedArtists.includes(artist.id)
+                            ? '#606bf8'
+                            : 'rgba(255, 255, 255, 0.3)',
+                        }}
+                      >
+                        {selectedArtists.includes(artist.id) && (
+                          <svg
+                            className="h-3 w-3 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <span>{artist.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-          {/* Release Filter Chip */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 gap-2"
-                style={{
-                  backgroundColor:
-                    selectedReleases.length > 0 ? '#7fc832' : 'transparent',
-                  color:
-                    selectedReleases.length > 0 ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  borderColor: selectedReleases.length > 0 ? '#7fc832' : undefined,
-                }}
-              >
-                Releases
-                {selectedReleases.length > 0 && (
-                  <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
-                    {selectedReleases.length}
-                  </span>
-                )}
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-2" align="start">
-              <div className="space-y-1 max-h-64 overflow-y-auto">
-                {releases.map((release) => (
-                  <button
-                    key={release.id}
-                    onClick={() => toggleRelease(release.id)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
-                  >
-                    <div
-                      className="h-4 w-4 rounded border flex items-center justify-center flex-shrink-0"
-                      style={{
-                        backgroundColor: selectedReleases.includes(release.id)
-                          ? '#7fc832'
-                          : 'transparent',
-                        borderColor: selectedReleases.includes(release.id)
-                          ? '#7fc832'
-                          : 'rgba(255, 255, 255, 0.3)',
-                      }}
+            {/* Release Filter Chip */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2"
+                  style={{
+                    backgroundColor:
+                      selectedReleases.length > 0 ? '#7fc832' : 'transparent',
+                    color:
+                      selectedReleases.length > 0
+                        ? 'white'
+                        : 'rgba(255, 255, 255, 0.7)',
+                    borderColor:
+                      selectedReleases.length > 0 ? '#7fc832' : undefined,
+                  }}
+                >
+                  Releases
+                  {selectedReleases.length > 0 && (
+                    <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
+                      {selectedReleases.length}
+                    </span>
+                  )}
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-2" align="start">
+                <div className="max-h-64 space-y-1 overflow-y-auto">
+                  {releases.map((release) => (
+                    <button
+                      key={release.id}
+                      onClick={() => toggleRelease(release.id)}
+                      className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors"
                     >
-                      {selectedReleases.includes(release.id) && (
-                        <svg
-                          className="h-3 w-3 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <span>{release.name}</span>
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+                      <div
+                        className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                        style={{
+                          backgroundColor: selectedReleases.includes(release.id)
+                            ? '#7fc832'
+                            : 'transparent',
+                          borderColor: selectedReleases.includes(release.id)
+                            ? '#7fc832'
+                            : 'rgba(255, 255, 255, 0.3)',
+                        }}
+                      >
+                        {selectedReleases.includes(release.id) && (
+                          <svg
+                            className="h-3 w-3 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <span>{release.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-          {/* DSP/Platform Filter Chip */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 gap-2"
-                style={{
-                  backgroundColor:
-                    selectedDSPs.length > 0 ? '#ff386a' : 'transparent',
-                  color:
-                    selectedDSPs.length > 0 ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  borderColor: selectedDSPs.length > 0 ? '#ff386a' : undefined,
-                }}
-              >
-                Platforms
-                {selectedDSPs.length > 0 && (
-                  <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
-                    {selectedDSPs.length}
-                  </span>
-                )}
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-2" align="start">
-              <div className="space-y-1 max-h-64 overflow-y-auto">
-                {dspOptions.map((dsp) => (
-                  <button
-                    key={dsp.value}
-                    onClick={() => toggleDSP(dsp.value)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
-                  >
-                    <div
-                      className="h-4 w-4 rounded border flex items-center justify-center flex-shrink-0"
-                      style={{
-                        backgroundColor: selectedDSPs.includes(dsp.value)
-                          ? '#ff386a'
-                          : 'transparent',
-                        borderColor: selectedDSPs.includes(dsp.value)
-                          ? '#ff386a'
-                          : 'rgba(255, 255, 255, 0.3)',
-                      }}
+            {/* DSP/Platform Filter Chip */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2"
+                  style={{
+                    backgroundColor:
+                      selectedDSPs.length > 0 ? '#ff386a' : 'transparent',
+                    color:
+                      selectedDSPs.length > 0
+                        ? 'white'
+                        : 'rgba(255, 255, 255, 0.7)',
+                    borderColor:
+                      selectedDSPs.length > 0 ? '#ff386a' : undefined,
+                  }}
+                >
+                  Platforms
+                  {selectedDSPs.length > 0 && (
+                    <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
+                      {selectedDSPs.length}
+                    </span>
+                  )}
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-2" align="start">
+                <div className="max-h-64 space-y-1 overflow-y-auto">
+                  {dspOptions.map((dsp) => (
+                    <button
+                      key={dsp.value}
+                      onClick={() => toggleDSP(dsp.value)}
+                      className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors"
                     >
-                      {selectedDSPs.includes(dsp.value) && (
-                        <svg
-                          className="h-3 w-3 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <span>{dsp.label}</span>
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+                      <div
+                        className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                        style={{
+                          backgroundColor: selectedDSPs.includes(dsp.value)
+                            ? '#ff386a'
+                            : 'transparent',
+                          borderColor: selectedDSPs.includes(dsp.value)
+                            ? '#ff386a'
+                            : 'rgba(255, 255, 255, 0.3)',
+                        }}
+                      >
+                        {selectedDSPs.includes(dsp.value) && (
+                          <svg
+                            className="h-3 w-3 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <span>{dsp.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-          {/* Clear All Button (only show if filters are active) */}
-          {(selectedArtists.length > 0 ||
-            selectedReleases.length > 0 ||
-            selectedDSPs.length > 0) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAllFilters}
-              className="h-9 gap-1 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-              Clear All
-            </Button>
-          )}
+            {/* Clear All Button (only show if filters are active) */}
+            {(selectedArtists.length > 0 ||
+              selectedReleases.length > 0 ||
+              selectedDSPs.length > 0) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-muted-foreground hover:text-foreground h-9 gap-1"
+              >
+                <X className="h-4 w-4" />
+                Clear All
+              </Button>
+            )}
           </div>
         </div>
 
@@ -361,7 +372,7 @@ export function FilterControls({
               <button
                 key={artistId}
                 onClick={() => toggleArtist(artistId)}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors"
+                className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors"
                 style={{ backgroundColor: '#606bf8', color: 'white' }}
               >
                 {getArtistName(artistId)}
@@ -372,7 +383,7 @@ export function FilterControls({
               <button
                 key={releaseId}
                 onClick={() => toggleRelease(releaseId)}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors"
+                className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors"
                 style={{ backgroundColor: '#7fc832', color: 'white' }}
               >
                 {getReleaseName(releaseId)}
@@ -383,7 +394,7 @@ export function FilterControls({
               <button
                 key={dsp}
                 onClick={() => toggleDSP(dsp)}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors"
+                className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors"
                 style={{ backgroundColor: '#ff386a', color: 'white' }}
               >
                 {getDSPLabel(dsp)}

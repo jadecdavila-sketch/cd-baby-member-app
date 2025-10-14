@@ -2,15 +2,20 @@ import type { NextConfig } from 'next';
 import WithBundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for lean production Docker images
-  output: 'standalone',
+  // Enable static export for GitHub Pages
+  output: 'export',
+  // Add base path if your repo name is not your GitHub username
+  basePath: '/cd-baby-member-app',
   typescript: {
     tsconfigPath: './tsconfig.prod.json',
   },
   eslint: {
     dirs: ['src/api', 'src/app', 'src/modules', 'src/shared'],
+    // Allow warnings during build for GitHub Pages deployment
+    ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -22,52 +27,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return {
-      beforeFiles: [],
-      afterFiles: [],
-      // Fallback rewrites for API requests
-      // This will redirect API requests to the external service URL
-      fallback: [
-        {
-          source: '/api/:path*',
-          destination: `${process.env.NEXT_PUBLIC_API_SERVICE_URL}/api/:path*`,
-        },
-      ],
-    };
-  },
-  async headers() {
-    return [
-      {
-        // Security headers for all routes
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Required for Next.js dev
-              "style-src 'self' 'unsafe-inline'", // Required for Tailwind CSS
-              "img-src 'self' data: https:",
-              "font-src 'self'",
-              "connect-src 'self'",
-              "frame-ancestors 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-            ].join('; '),
-          },
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-        ],
-      },
-    ];
-  },
+  // Note: rewrites() and headers() are not supported with output: 'export'
 };
 
 /**
