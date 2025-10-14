@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
             />
 
             {/* Brazil Insight - Full Width */}
-            <InsightCard insight={mockAIInsights[0]} />
+            {mockAIInsights[0] && <InsightCard insight={mockAIInsights[0]} />}
 
             {/* Geographic Map - Full Width */}
             <GeographicMap
@@ -220,7 +220,7 @@ export default function AnalyticsPage() {
             />
 
             {/* TikTok Insight - Full Width */}
-            <InsightCard insight={mockAIInsights[3]} />
+            {mockAIInsights[3] && <InsightCard insight={mockAIInsights[3]} />}
 
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -238,7 +238,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Playlist Insight - Full Width */}
-            <InsightCard insight={mockAIInsights[1]} />
+            {mockAIInsights[1] && <InsightCard insight={mockAIInsights[1]} />}
 
             {/* Top Playlists */}
             <TopPlaylists
