@@ -1,41 +1,22 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { SessionProvider } from 'next-auth/react';
-
-import { SignInButton } from '@/app/auth/sign-in/components/sign-in-button/sign-in-button';
-import { SignOutButton } from '@/app/auth/sign-out/components/sign-out-button/sign-out-button';
-import { DatePicker } from '@/shared/components/form/date-picker/date-picker';
-import { TimePicker } from '@/shared/components/form/time-picker/time-picker';
-
-function HomeContent() {
-  const { data: session, status } = useSession();
-
-  if (status === 'loading') return <div>Loading...</div>;
-
-  return (
-    <main className="mx-auto max-w-7xl flex-1 p-8" style={{ width: 320 }}>
-      {session ? (
-        <div className="space-y-4">
-          <p>Signed in as: {session.user?.email}</p>
-          <SignOutButton />
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <p>Your music distribution platform.</p>
-          <SignInButton />
-          <DatePicker placeholder="Select a date" />
-          <TimePicker placeholder="12.00am" />
-        </div>
-      )}
-    </main>
-  );
-}
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to analytics page for GitHub Pages demo
+    router.push('/analytics');
+  }, [router]);
+
   return (
-    <SessionProvider>
-      <HomeContent />
-    </SessionProvider>
+    <main className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">CD Baby Analytics</h1>
+        <p className="text-muted-foreground">Redirecting to analytics dashboard...</p>
+      </div>
+    </main>
   );
 }
