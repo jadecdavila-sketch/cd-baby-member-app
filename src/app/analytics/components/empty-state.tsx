@@ -25,6 +25,12 @@ import {
 } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
 
+// Helper function to add basePath for production
+const getAssetPath = (path: string) => {
+  const basePath = process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
+  return `${basePath}${path}`;
+};
+
 interface Milestone {
   range: string;
   current: number;
@@ -503,7 +509,7 @@ export function EmptyState({ onComplete }: EmptyStateProps) {
                 style={{ backgroundColor: '#52bcd6' }}
               >
                 <img
-                  src="/assets/note.png"
+                  src={getAssetPath('/assets/note.png')}
                   alt="Music Note"
                   className="h-32 w-32"
                 />
