@@ -16,6 +16,12 @@ import { Button } from '@/shared/components/shadcn/button';
 import type { GeographicData, MetricType } from '../mock-data';
 import { getMetricLabel, formatNumber } from '../mock-data';
 
+// Helper function to add basePath for production
+const getAssetPath = (path: string) => {
+  const basePath = process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
+  return `${basePath}${path}`;
+};
+
 interface GeographicMapProps {
   data: GeographicData[];
 }
@@ -116,7 +122,7 @@ export function GeographicMap({ data }: GeographicMapProps) {
         {/* World Map */}
         <div className="mb-6 rounded-lg bg-[#0a0a0a] p-6">
           <img
-            src="/world-map.jpg"
+            src={getAssetPath('/world-map.jpg')}
             alt="World Map"
             className="h-auto w-full rounded"
           />
