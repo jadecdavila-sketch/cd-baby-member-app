@@ -14,7 +14,7 @@ interface Message {
 }
 
 export function AIAssistant() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -215,7 +215,8 @@ export function AIAssistant() {
           <Button
             onClick={handleSendMessage}
             disabled={!input.trim()}
-            className="flex-shrink-0"
+            size="icon"
+            className="flex-shrink-0 w-10"
             style={{ backgroundColor: 'var(--cdbaby-purple)' }}
           >
             <Send className="h-4 w-4" />

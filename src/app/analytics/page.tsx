@@ -12,6 +12,7 @@ import { TopPlaylists } from './components/top-playlists';
 import { AIInsights } from './components/ai-insights';
 import { ActionCards } from './components/action-cards';
 import { AIAssistant } from './components/ai-assistant';
+import { EmptyState } from './components/empty-state';
 import {
   mockKPIs,
   mockTimeSeriesData,
@@ -27,6 +28,7 @@ import {
 } from './mock-data';
 
 export default function AnalyticsPage() {
+  const [viewMode, setViewMode] = useState<'full' | 'empty'>('full');
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('7d');
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
   const [selectedRelease, setSelectedRelease] = useState<string | null>(null);
@@ -120,22 +122,50 @@ export default function AnalyticsPage() {
       {/* Page Header */}
       <div style={{ backgroundColor: '#1C1C1C' }}>
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mb-2">
-            <h1 className="text-4xl font-bold font-[var(--font-test-national-2-narrow)] uppercase">
-              ANALYTICS
-            </h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              Your creative command center – insights, trends, and next steps
-            </p>
+          <div className="mb-2 flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-bold font-[var(--font-test-national-2-narrow)] uppercase">
+                ANALYTICS
+              </h1>
+              <p className="mt-2 text-lg text-muted-foreground">
+                Your creative command center – insights, trends, and next steps
+              </p>
+            </div>
+            {/* Prototype Toggle */}
+            <div className="inline-flex rounded-lg border border-border overflow-hidden">
+              <button
+                onClick={() => setViewMode('full')}
+                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 border-r border-border hover:bg-muted/50"
+                style={{
+                  backgroundColor: viewMode === 'full' ? '#52bcd6' : 'transparent',
+                  color: viewMode === 'full' ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                Full Analytics
+              </button>
+              <button
+                onClick={() => setViewMode('empty')}
+                className="px-3 py-1.5 text-sm font-medium transition-all duration-200 hover:bg-muted/50"
+                style={{
+                  backgroundColor: viewMode === 'empty' ? '#52bcd6' : 'transparent',
+                  color: viewMode === 'empty' ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                Empty State
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-8">
-          {/* KPI Cards */}
-          <KPICards kpis={filteredData.kpis} />
+        {viewMode === 'empty' ? (
+          <EmptyState />
+        ) : (
+          <div className="space-y-8">
+            {/* KPI Cards */}
+            <KPICards kpis={filteredData.kpis} />
 
           {/* AI Insights */}
           <AIInsights insights={mockAIInsights} />
@@ -198,7 +228,8 @@ export default function AnalyticsPage() {
               <p>Data last updated: {lastUpdated}</p>
             </div>
           )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* AI Assistant (Floating) */}
