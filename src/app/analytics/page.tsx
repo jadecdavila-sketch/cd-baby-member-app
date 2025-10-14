@@ -22,9 +22,8 @@ const GeographicMap = dynamic(
 import { TopTracks } from './components/top-tracks';
 import { TopVideos } from './components/top-videos';
 import { TopPlaylists } from './components/top-playlists';
-import { AIInsights } from './components/ai-insights';
+import { InsightCard } from './components/insight-card';
 import { ActionCards } from './components/action-cards';
-import { AIAssistant } from './components/ai-assistant';
 import { EmptyState } from './components/empty-state';
 import {
   mockKPIs,
@@ -186,9 +185,6 @@ export default function AnalyticsPage() {
             {/* KPI Cards */}
             <KPICards kpis={filteredData.kpis} />
 
-            {/* AI Insights */}
-            <AIInsights insights={mockAIInsights} />
-
             {/* Filter Controls - Sticky */}
             <div
               className="sticky top-0 z-10 pb-4"
@@ -214,11 +210,17 @@ export default function AnalyticsPage() {
               data={filteredData.timeSeriesData}
             />
 
+            {/* Brazil Insight - Full Width */}
+            <InsightCard insight={mockAIInsights[0]} />
+
             {/* Geographic Map - Full Width */}
             <GeographicMap
               key={`geo-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
               data={filteredData.geographicData}
             />
+
+            {/* TikTok Insight - Full Width */}
+            <InsightCard insight={mockAIInsights[3]} />
 
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -234,6 +236,9 @@ export default function AnalyticsPage() {
                 videos={filteredData.videos}
               />
             </div>
+
+            {/* Playlist Insight - Full Width */}
+            <InsightCard insight={mockAIInsights[1]} />
 
             {/* Top Playlists */}
             <TopPlaylists
@@ -253,9 +258,6 @@ export default function AnalyticsPage() {
           </div>
         )}
       </div>
-
-      {/* AI Assistant (Floating) */}
-      <AIAssistant />
     </div>
   );
 }

@@ -4,8 +4,8 @@ import WithBundleAnalyzer from '@next/bundle-analyzer';
 const nextConfig: NextConfig = {
   // Enable static export for GitHub Pages
   output: 'export',
-  // Add base path if your repo name is not your GitHub username
-  basePath: '/cd-baby-member-app',
+  // Add base path only in production for GitHub Pages
+  basePath: process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '',
   typescript: {
     tsconfigPath: './tsconfig.prod.json',
   },

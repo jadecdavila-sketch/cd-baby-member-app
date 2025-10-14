@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Music, TrendingUp } from 'lucide-react';
+import { Music, TrendingUp, Search } from 'lucide-react';
 import Image from 'next/image';
 
 import {
@@ -21,6 +21,7 @@ interface TopTracksProps {
 
 export function TopTracks({ tracks }: TopTracksProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const metricOptions: MetricType[] = [
     'streams',
@@ -47,39 +48,68 @@ export function TopTracks({ tracks }: TopTracksProps) {
     }
   };
 
-  // Sort tracks by selected metric
-  const sortedTracks = [...tracks].sort(
+  // Filter tracks by search query
+  const filteredTracks = tracks.filter(
+    (track) =>
+      track.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      track.artist.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Sort filtered tracks by selected metric
+  const sortedTracks = [...filteredTracks].sort(
     (a, b) => b[selectedMetric] - a[selectedMetric]
   );
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Music className="h-5 w-5" />
-            <CardTitle>Top Tracks</CardTitle>
+        <div className="space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <Music className="h-5 w-5" />
+              <CardTitle>Top Tracks</CardTitle>
+            </div>
+            <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
+              {metricOptions.map((metric) => (
+                <button
+                  key={metric}
+                  onClick={() => setSelectedMetric(metric)}
+                  className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
+                  style={{
+                    backgroundColor:
+                      selectedMetric === metric
+                        ? getColor(metric)
+                        : 'transparent',
+                    color:
+                      selectedMetric === metric
+                        ? 'white'
+                        : 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  {getMetricLabel(metric)}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
-            {metricOptions.map((metric) => (
+
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search tracks or artists..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-muted/50 border-border placeholder:text-muted-foreground focus:border-[var(--cdbaby-light-blue)] w-full rounded-lg border px-10 py-2 text-sm transition-colors focus:outline-none"
+            />
+            {searchQuery && (
               <button
-                key={metric}
-                onClick={() => setSelectedMetric(metric)}
-                className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
-                style={{
-                  backgroundColor:
-                    selectedMetric === metric
-                      ? getColor(metric)
-                      : 'transparent',
-                  color:
-                    selectedMetric === metric
-                      ? 'white'
-                      : 'rgba(255, 255, 255, 0.7)',
-                }}
+                onClick={() => setSearchQuery('')}
+                className="text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors"
               >
-                {getMetricLabel(metric)}
+                Clear
               </button>
-            ))}
+            )}
           </div>
         </div>
       </CardHeader>
