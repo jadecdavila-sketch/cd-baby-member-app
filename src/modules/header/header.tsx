@@ -10,6 +10,12 @@ interface HeaderProps {
   className?: string;
 }
 
+// Helper function to add basePath for production
+const getAssetPath = (path: string) => {
+  const basePath = process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
+  return `${basePath}${path}`;
+};
+
 export function Header({ className }: HeaderProps) {
   const notificationCount: number = 0;
   return (
@@ -21,7 +27,7 @@ export function Header({ className }: HeaderProps) {
     >
       <div className="m-auto flex w-full max-w-[1600px] justify-between">
         <Image
-          src="/assets/cdbaby-logo.svg"
+          src={getAssetPath('/assets/cdbaby-logo.svg')}
           alt="CD Baby"
           width={168}
           height={40}
@@ -55,7 +61,7 @@ export function Header({ className }: HeaderProps) {
               aria-label="Search"
             >
               <Image
-                src="/assets/icon-search.svg"
+                src={getAssetPath('/assets/icon-search.svg')}
                 alt=""
                 width={24}
                 height={24}
@@ -70,7 +76,7 @@ export function Header({ className }: HeaderProps) {
               }`}
             >
               <Image
-                src="/assets/icon-bell.svg"
+                src={getAssetPath('/assets/icon-bell.svg')}
                 alt=""
                 width={24}
                 height={24}
@@ -92,7 +98,7 @@ export function Header({ className }: HeaderProps) {
               aria-label="User profile"
             >
               <Image
-                src="/assets/icon-person.svg"
+                src={getAssetPath('/assets/icon-person.svg')}
                 alt=""
                 width={24}
                 height={24}
