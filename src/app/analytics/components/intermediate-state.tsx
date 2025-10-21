@@ -22,37 +22,6 @@ import { Button } from '@/shared/components/shadcn/button';
 interface IntermediateStateProps {
   // Data from analytics
   currentStreams: number;
-  kpis: Array<{
-    label: string;
-    current: number;
-    previous: number;
-    change: number;
-    color: string;
-  }>;
-  topTracks: Array<{
-    id: string;
-    name: string;
-    artist: string;
-    streams: number;
-    coverUrl: string;
-  }>;
-  topVideos: Array<{
-    id: string;
-    trackName: string;
-    artist: string;
-    platform: string;
-    creations: number;
-    thumbnailUrl: string;
-  }>;
-  // Chart data
-  timeSeriesData: Array<{
-    date: string;
-    streams: number;
-    creations: number;
-    views: number;
-    likes: number;
-    shares: number;
-  }>;
   // Children components to render
   renderKPICards: () => React.ReactNode;
   renderFilterControls: () => React.ReactNode;

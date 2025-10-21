@@ -223,10 +223,6 @@ export default function AnalyticsPage() {
         ) : viewMode === 'intermediate' ? (
           <IntermediateState
             currentStreams={Math.round(filteredData.kpis[0]?.current || 625)}
-            kpis={filteredData.kpis}
-            topTracks={filteredData.tracks}
-            topVideos={filteredData.videos}
-            timeSeriesData={filteredData.timeSeriesData}
             renderKPICards={() => <KPICards kpis={filteredData.kpis} />}
             renderFilterControls={() => (
               <div
