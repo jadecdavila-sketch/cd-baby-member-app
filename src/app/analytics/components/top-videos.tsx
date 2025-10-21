@@ -113,78 +113,121 @@ export function TopVideos({ videos }: TopVideosProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {sortedVideos.map((video, index) => {
-            const value = video[selectedMetric];
+        {sortedVideos.length === 0 ? (
+          // Empty State - No Videos Yet
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[var(--cdbaby-purple)]/30 bg-[var(--cdbaby-purple)]/5 p-12 text-center">
+            <div className="mb-4 rounded-full bg-[var(--cdbaby-purple)]/10 p-6">
+              <VideoIcon
+                className="h-12 w-12"
+                style={{ color: 'var(--cdbaby-purple)' }}
+              />
+            </div>
+            <h3 className="mb-2 text-xl font-bold">
+              No Video Creations Yet
+            </h3>
+            <p className="text-muted-foreground mb-6 max-w-md text-sm">
+              People haven't started creating content with your music yet. Get
+              your music in front of potential fans and inspire them to create!
+            </p>
 
-            return (
-              <div
-                key={video.id}
-                className="group relative overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                {/* Rank Badge */}
-                {index === 0 && (
-                  <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-full bg-[var(--cdbaby-green)] px-2 py-1 text-xs font-bold text-white">
-                    <TrendingUp className="h-3 w-3" />
-                    #1
-                  </div>
-                )}
-
-                {/* Thumbnail */}
-                <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
-                  <Image
-                    src={video.thumbnailUrl}
-                    alt={video.trackName}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  {/* Platform Badge */}
-                  <div className="absolute right-2 bottom-2">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${getPlatformBadgeColor(video.platform)}`}
-                    >
-                      {getPlatformName(video.platform)}
-                    </span>
-                  </div>
+            {/* HearNow Promotion */}
+            <div className="w-full max-w-md rounded-lg border-2 border-[var(--cdbaby-light-blue)]/30 bg-[var(--cdbaby-light-blue)]/10 p-6">
+              <div className="mb-3 flex items-center justify-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#606bf8]">
+                  <ExternalLink className="h-5 w-5 text-white" />
                 </div>
-
-                {/* Video Info */}
-                <div className="p-4">
-                  <h4 className="mb-1 truncate font-semibold">
-                    {video.trackName}
-                  </h4>
-                  <p className="text-muted-foreground mb-3 truncate text-sm">
-                    by {video.creator}
-                  </p>
-
-                  {/* Selected Metric Value */}
-                  <div className="mb-3">
-                    <p
-                      className="text-3xl font-bold"
-                      style={{ color: getColor(selectedMetric) }}
-                    >
-                      {formatNumber(value)}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {getMetricLabel(selectedMetric)}
-                    </p>
-                  </div>
-
-                  {/* View Video Button */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => window.open(video.videoUrl, '_blank')}
-                  >
-                    <ExternalLink className="mr-2 h-3 w-3" />
-                    View Video
-                  </Button>
-                </div>
+                <h4 className="text-lg font-bold">Share with HearNow</h4>
               </div>
-            );
-          })}
-        </div>
+              <p className="text-muted-foreground mb-4 text-sm">
+                Create a smart link to share your music everywhere. Make it easy
+                for fans to listen, save, and share your tracks on their
+                favorite platforms.
+              </p>
+              <Button
+                size="lg"
+                className="w-full border-0 text-white"
+                style={{ backgroundColor: '#606bf8' }}
+              >
+                Create Your Link
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          // Regular Video Grid
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {sortedVideos.map((video, index) => {
+              const value = video[selectedMetric];
+
+              return (
+                <div
+                  key={video.id}
+                  className="group relative overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  {/* Rank Badge */}
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-full bg-[var(--cdbaby-green)] px-2 py-1 text-xs font-bold text-white">
+                      <TrendingUp className="h-3 w-3" />
+                      #1
+                    </div>
+                  )}
+
+                  {/* Thumbnail */}
+                  <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
+                    <Image
+                      src={video.thumbnailUrl}
+                      alt={video.trackName}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    {/* Platform Badge */}
+                    <div className="absolute right-2 bottom-2">
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-semibold ${getPlatformBadgeColor(video.platform)}`}
+                      >
+                        {getPlatformName(video.platform)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Video Info */}
+                  <div className="p-4">
+                    <h4 className="mb-1 truncate font-semibold">
+                      {video.trackName}
+                    </h4>
+                    <p className="text-muted-foreground mb-3 truncate text-sm">
+                      by {video.creator}
+                    </p>
+
+                    {/* Selected Metric Value */}
+                    <div className="mb-3">
+                      <p
+                        className="text-3xl font-bold"
+                        style={{ color: getColor(selectedMetric) }}
+                      >
+                        {formatNumber(value)}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {getMetricLabel(selectedMetric)}
+                      </p>
+                    </div>
+
+                    {/* View Video Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => window.open(video.videoUrl, '_blank')}
+                    >
+                      <ExternalLink className="mr-2 h-3 w-3" />
+                      View Video
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

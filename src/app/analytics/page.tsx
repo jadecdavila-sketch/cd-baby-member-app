@@ -25,6 +25,7 @@ import { TopPlaylists } from './components/top-playlists';
 import { InsightCard } from './components/insight-card';
 import { ActionCards } from './components/action-cards';
 import { EmptyState } from './components/empty-state';
+import { IntermediateState } from './components/intermediate-state';
 import {
   mockKPIs,
   mockTimeSeriesData,
@@ -40,7 +41,9 @@ import {
 } from './mock-data';
 
 export default function AnalyticsPage() {
-  const [viewMode, setViewMode] = useState<'full' | 'empty'>('full');
+  const [viewMode, setViewMode] = useState<'full' | 'intermediate' | 'empty'>(
+    'full'
+  );
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('7d');
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
   const [selectedRelease, setSelectedRelease] = useState<string | null>(null);
@@ -55,6 +58,11 @@ export default function AnalyticsPage() {
   const filteredData = useMemo(() => {
     // Create a multiplier based on filters to simulate different data
     let multiplier = 1;
+
+    // Intermediate state shows much smaller numbers (100-999 streams range)
+    if (viewMode === 'intermediate') {
+      multiplier = 0.005; // Reduces ~125k streams to ~625 streams
+    }
 
     // Time frame affects data amount
     if (timeFrame === '30d') multiplier *= 1.8;
@@ -95,14 +103,32 @@ export default function AnalyticsPage() {
       shares: Math.round(geo.shares * multiplier),
     }));
 
-    const filteredTracks = mockTopTracks.map((track) => ({
-      ...track,
-      streams: Math.round(track.streams * multiplier),
-      creations: Math.round(track.creations * multiplier),
-      views: Math.round(track.views * multiplier),
-      likes: Math.round(track.likes * multiplier),
-      shares: Math.round(track.shares * multiplier),
-    }));
+    const filteredTracks = mockTopTracks
+      .filter((track) => {
+        // Filter by artist if selected
+        if (selectedArtist) {
+          const artist = mockArtists.find((a) => a.id === selectedArtist);
+          if (artist && track.artist !== artist.name) {
+            return false;
+          }
+        }
+        // Filter by release if selected
+        if (selectedRelease) {
+          const release = mockReleases.find((r) => r.id === selectedRelease);
+          if (release && track.releaseDate !== release.releaseDate) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .map((track) => ({
+        ...track,
+        streams: Math.round(track.streams * multiplier),
+        creations: Math.round(track.creations * multiplier),
+        views: Math.round(track.views * multiplier),
+        likes: Math.round(track.likes * multiplier),
+        shares: Math.round(track.shares * multiplier),
+      }));
 
     const filteredVideos = mockTopVideos
       .filter((video) => !selectedDSP || video.platform === selectedDSP)
@@ -129,7 +155,7 @@ export default function AnalyticsPage() {
       videos: filteredVideos,
       playlists: filteredPlaylists,
     };
-  }, [timeFrame, selectedArtist, selectedRelease, selectedDSP]);
+  }, [viewMode, timeFrame, selectedArtist, selectedRelease, selectedDSP]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1C1C1C' }}>
@@ -160,6 +186,20 @@ export default function AnalyticsPage() {
                 Full Analytics
               </button>
               <button
+                onClick={() => setViewMode('intermediate')}
+                className="border-border hover:bg-muted/50 border-r px-3 py-1.5 text-sm font-medium transition-all duration-200"
+                style={{
+                  backgroundColor:
+                    viewMode === 'intermediate' ? '#52bcd6' : 'transparent',
+                  color:
+                    viewMode === 'intermediate'
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                Intermediate
+              </button>
+              <button
                 onClick={() => setViewMode('empty')}
                 className="hover:bg-muted/50 px-3 py-1.5 text-sm font-medium transition-all duration-200"
                 style={{
@@ -179,7 +219,53 @@ export default function AnalyticsPage() {
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {viewMode === 'empty' ? (
-          <EmptyState onComplete={() => setViewMode('full')} />
+          <EmptyState onComplete={() => setViewMode('intermediate')} />
+        ) : viewMode === 'intermediate' ? (
+          <IntermediateState
+            currentStreams={Math.round(filteredData.kpis[0]?.current || 625)}
+            kpis={filteredData.kpis}
+            topTracks={filteredData.tracks}
+            topVideos={filteredData.videos}
+            timeSeriesData={filteredData.timeSeriesData}
+            renderKPICards={() => <KPICards kpis={filteredData.kpis} />}
+            renderFilterControls={() => (
+              <div
+                className="sticky top-0 z-10 pb-4"
+                style={{ backgroundColor: '#1C1C1C' }}
+              >
+                <FilterControls
+                  timeFrame={timeFrame}
+                  onTimeFrameChange={setTimeFrame}
+                  selectedArtist={selectedArtist}
+                  onArtistChange={setSelectedArtist}
+                  selectedRelease={selectedRelease}
+                  onReleaseChange={setSelectedRelease}
+                  selectedDSP={selectedDSP}
+                  onDSPChange={setSelectedDSP}
+                  artists={mockArtists}
+                  releases={mockReleases}
+                />
+              </div>
+            )}
+            renderMetricsChart={() => (
+              <MetricsChart
+                key={`chart-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                data={filteredData.timeSeriesData}
+              />
+            )}
+            renderTopTracks={() => (
+              <TopTracks
+                key={`tracks-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                tracks={filteredData.tracks}
+              />
+            )}
+            renderTopVideos={() => (
+              <TopVideos
+                key={`videos-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                videos={[]}
+              />
+            )}
+          />
         ) : (
           <div className="space-y-8">
             {/* KPI Cards */}
@@ -211,16 +297,22 @@ export default function AnalyticsPage() {
             />
 
             {/* Brazil Insight - Full Width */}
-            {mockAIInsights[0] && <InsightCard insight={mockAIInsights[0]} />}
+            {viewMode === 'full' && mockAIInsights[0] && (
+              <InsightCard insight={mockAIInsights[0]} />
+            )}
 
             {/* Geographic Map - Full Width */}
-            <GeographicMap
-              key={`geo-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
-              data={filteredData.geographicData}
-            />
+            {viewMode === 'full' && (
+              <GeographicMap
+                key={`geo-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                data={filteredData.geographicData}
+              />
+            )}
 
             {/* TikTok Insight - Full Width */}
-            {mockAIInsights[3] && <InsightCard insight={mockAIInsights[3]} />}
+            {viewMode === 'full' && mockAIInsights[3] && (
+              <InsightCard insight={mockAIInsights[3]} />
+            )}
 
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -238,16 +330,20 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Playlist Insight - Full Width */}
-            {mockAIInsights[1] && <InsightCard insight={mockAIInsights[1]} />}
+            {viewMode === 'full' && mockAIInsights[1] && (
+              <InsightCard insight={mockAIInsights[1]} />
+            )}
 
             {/* Top Playlists */}
-            <TopPlaylists
-              key={`playlists-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
-              playlists={filteredData.playlists}
-            />
+            {viewMode === 'full' && (
+              <TopPlaylists
+                key={`playlists-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                playlists={filteredData.playlists}
+              />
+            )}
 
             {/* Action Cards */}
-            <ActionCards />
+            {viewMode === 'full' && <ActionCards />}
 
             {/* Last Updated Info */}
             {lastUpdated && (

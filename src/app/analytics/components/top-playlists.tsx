@@ -60,7 +60,12 @@ export function TopPlaylists({ playlists }: TopPlaylistsProps) {
           {playlists.map((playlist, index) => (
             <div
               key={playlist.id}
-              className="group hover:bg-muted/50 flex items-start gap-4 rounded-lg border p-4 transition-all duration-300 hover:shadow-md"
+              onClick={() => playlist.playlistUrl && window.open(playlist.playlistUrl, '_blank')}
+              className={`group flex items-start gap-4 rounded-lg border p-4 transition-all duration-300 hover:shadow-md ${
+                playlist.playlistUrl
+                  ? 'cursor-pointer hover:bg-muted/50'
+                  : 'hover:bg-muted/50'
+              }`}
             >
               {/* Rank */}
               <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
@@ -76,7 +81,7 @@ export function TopPlaylists({ playlists }: TopPlaylistsProps) {
               {/* Playlist Info */}
               <div className="min-w-0 flex-1">
                 <div className="mb-2 flex items-center gap-2">
-                  <h4 className="truncate font-semibold">{playlist.name}</h4>
+                  <h4 className={`truncate font-semibold ${playlist.playlistUrl ? 'underline' : ''}`}>{playlist.name}</h4>
                   <span
                     className={`flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${getDSPColor(playlist.dsp)}`}
                   >

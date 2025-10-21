@@ -121,7 +121,12 @@ export function TopTracks({ tracks }: TopTracksProps) {
             return (
               <div
                 key={track.id}
-                className="group hover:bg-muted/50 flex items-center gap-4 rounded-lg p-3 transition-all duration-300"
+                onClick={() => track.trackUrl && window.open(track.trackUrl, '_blank')}
+                className={`group flex items-center gap-4 rounded-lg p-3 transition-all duration-300 ${
+                  track.trackUrl
+                    ? 'cursor-pointer hover:bg-muted/50'
+                    : ''
+                }`}
               >
                 {/* Rank */}
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
@@ -146,7 +151,7 @@ export function TopTracks({ tracks }: TopTracksProps) {
 
                 {/* Track Info */}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{track.name}</p>
+                  <p className={`truncate font-semibold ${track.trackUrl ? 'underline' : ''}`}>{track.name}</p>
                   <p className="text-muted-foreground truncate text-sm">
                     {track.artist}
                   </p>

@@ -46,6 +46,7 @@ export interface Track {
   artist: string;
   releaseDate: string;
   artworkUrl: string;
+  trackUrl?: string;
   streams: number;
   creations: number;
   views: number;
@@ -70,6 +71,7 @@ export interface Playlist {
   id: string;
   name: string;
   dsp: 'spotify' | 'apple-music' | 'youtube-music' | 'amazon';
+  playlistUrl?: string;
   streams: number;
   curatorName: string;
   followerCount: number;
@@ -327,6 +329,7 @@ export const mockTopTracks: Track[] = [
     artist: 'Jade Davis',
     releaseDate: '2024-06-15',
     artworkUrl: 'https://picsum.photos/seed/track1/300/300',
+    trackUrl: 'https://open.spotify.com/track/example1',
     streams: 45823,
     creations: 1823,
     views: 289456,
@@ -339,6 +342,7 @@ export const mockTopTracks: Track[] = [
     artist: 'Luna Wave',
     releaseDate: '2024-07-01',
     artworkUrl: 'https://picsum.photos/seed/track2/300/300',
+    trackUrl: 'https://open.spotify.com/track/example2',
     streams: 38456,
     creations: 1534,
     views: 245678,
@@ -351,6 +355,7 @@ export const mockTopTracks: Track[] = [
     artist: 'Jade Davis',
     releaseDate: '2024-08-20',
     artworkUrl: 'https://picsum.photos/seed/track3/300/300',
+    trackUrl: 'https://open.spotify.com/track/example3',
     streams: 32145,
     creations: 1289,
     views: 198765,
@@ -363,6 +368,7 @@ export const mockTopTracks: Track[] = [
     artist: 'The Midnight Owls',
     releaseDate: '2024-05-10',
     artworkUrl: 'https://picsum.photos/seed/track4/300/300',
+    trackUrl: 'https://open.spotify.com/track/example4',
     streams: 27834,
     creations: 1045,
     views: 167890,
@@ -375,6 +381,7 @@ export const mockTopTracks: Track[] = [
     artist: 'Jade Davis',
     releaseDate: '2024-06-15',
     artworkUrl: 'https://picsum.photos/seed/track5/300/300',
+    trackUrl: 'https://open.spotify.com/track/example5',
     streams: 23567,
     creations: 923,
     views: 145678,
@@ -453,6 +460,7 @@ export const mockTopPlaylists: Playlist[] = [
     id: '1',
     name: 'Chill Vibes',
     dsp: 'spotify',
+    playlistUrl: 'https://open.spotify.com/playlist/example1',
     streams: 34567,
     curatorName: 'Spotify Editorial',
     followerCount: 2456789,
@@ -461,6 +469,7 @@ export const mockTopPlaylists: Playlist[] = [
     id: '2',
     name: 'Indie Favorites',
     dsp: 'apple-music',
+    playlistUrl: 'https://music.apple.com/playlist/example2',
     streams: 28934,
     curatorName: 'Apple Music Editors',
     followerCount: 1823456,
@@ -469,6 +478,7 @@ export const mockTopPlaylists: Playlist[] = [
     id: '3',
     name: 'Road Trip Anthems',
     dsp: 'spotify',
+    playlistUrl: 'https://open.spotify.com/playlist/example3',
     streams: 23456,
     curatorName: 'Discover Weekly',
     followerCount: 3456789,
@@ -477,6 +487,7 @@ export const mockTopPlaylists: Playlist[] = [
     id: '4',
     name: 'Summer Hits 2024',
     dsp: 'youtube-music',
+    playlistUrl: 'https://music.youtube.com/playlist?list=example4',
     streams: 19823,
     curatorName: 'YouTube Music',
     followerCount: 987654,
@@ -485,6 +496,7 @@ export const mockTopPlaylists: Playlist[] = [
     id: '5',
     name: 'Feel Good Music',
     dsp: 'spotify',
+    playlistUrl: 'https://open.spotify.com/playlist/example5',
     streams: 17234,
     curatorName: 'Daily Mix',
     followerCount: 1234567,
