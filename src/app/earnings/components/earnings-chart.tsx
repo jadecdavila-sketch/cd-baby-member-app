@@ -328,7 +328,7 @@ export function EarningsChart({
       </svg>
 
       {/* Rich tooltip */}
-      {hoveredIndex !== null && (
+      {hoveredIndex !== null && formattedData[hoveredIndex] && (
         <div
           className="absolute rounded-lg border border-gray-600 p-3 shadow-lg"
           style={{
