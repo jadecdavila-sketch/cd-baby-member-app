@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   output: 'export',
   // Add base path only in production for GitHub Pages
   basePath: process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '',
+  // Asset prefix must match basePath for GitHub Pages
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '',
   typescript: {
     tsconfigPath: './tsconfig.prod.json',
   },
