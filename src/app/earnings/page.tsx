@@ -145,7 +145,7 @@ export default function EarningsPage() {
             </Link>
 
             {/* Last Payout */}
-            <Link href="/earnings/payouts/latest">
+            <Link href="/earnings/payout/payout-001">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm">LAST PAYOUT</CardTitle>
