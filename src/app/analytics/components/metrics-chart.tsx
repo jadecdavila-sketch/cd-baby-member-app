@@ -17,11 +17,12 @@ interface MetricsChartProps {
 }
 
 export function MetricsChart({ data }: MetricsChartProps) {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
+  type ChartMetricType = 'streams' | 'creations' | 'views';
+  const [selectedMetric, setSelectedMetric] = useState<ChartMetricType>('streams');
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
+  const metricOptions: ChartMetricType[] = ['streams', 'creations', 'views'];
 
-  const getColor = (metric: MetricType) => {
+  const getColor = (metric: ChartMetricType) => {
     switch (metric) {
       case 'streams':
         return '#34D5FD';
