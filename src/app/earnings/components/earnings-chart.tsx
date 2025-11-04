@@ -124,8 +124,11 @@ export function EarningsChart({
   // Calculate percentage change for tooltip
   const getPercentageChange = (index: number, type: 'streaming' | 'socialVideo') => {
     if (index === 0) return null;
-    const current = formattedData[index][type];
-    const previous = formattedData[index - 1][type];
+    const currentItem = formattedData[index];
+    const previousItem = formattedData[index - 1];
+    if (!currentItem || !previousItem) return null;
+    const current = currentItem[type];
+    const previous = previousItem[type];
     if (previous === 0) return null;
     return ((current - previous) / previous) * 100;
   };
