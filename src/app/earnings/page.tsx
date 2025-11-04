@@ -16,7 +16,6 @@ import { COLORS } from '@/shared/constants/theme';
 
 import { PayPointProgress } from './components/pay-point-progress';
 import { PlatformIcon } from './components/platform-icon';
-import { EarningsDetailDrawer } from './components/earnings-detail-drawer';
 import { ReportsDrawer } from './components/reports-drawer';
 import {
   mockEarningsBalance,
@@ -40,12 +39,6 @@ const EarningsChart = dynamic(
 type TimeFrame = 'monthly' | 'yearly' | 'lifetime' | 'quarterly';
 
 export default function EarningsPage() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerData, setDrawerData] = useState<{
-    title: string;
-    transactions: typeof mockRecentTransactions;
-    totalAmount: number;
-  } | null>(null);
   const [reportsDrawerOpen, setReportsDrawerOpen] = useState(false);
 
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('monthly');
@@ -61,27 +54,6 @@ export default function EarningsPage() {
     // TODO: In production, this would call an API to update the user's threshold
     console.log('Pay point changed to:', newThreshold);
   };
-
-  const openDrawer = (
-    title: string,
-    transactions: typeof mockRecentTransactions,
-    totalAmount: number
-  ) => {
-    setDrawerData({ title, transactions, totalAmount });
-    setDrawerOpen(true);
-  };
-
-  // Get transactions for each category
-  const thisMonthTransactions = mockRecentTransactions.filter((t) => {
-    const date = new Date(t.date);
-    const now = new Date();
-    return (
-      date.getMonth() === now.getMonth() &&
-      date.getFullYear() === now.getFullYear()
-    );
-  });
-
-  const lastPayoutTransactions = mockRecentTransactions.slice(0, 3);
 
   const streamingBreakdown = mockEarningTypeBreakdown.find(
     (b) => b.type === 'streaming'
@@ -146,8 +118,8 @@ export default function EarningsPage() {
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
-          {/* 5 KPI Cards Grid */}
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {/* 4 KPI Cards Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Total All-Time Earnings */}
             <Link href="/earnings/history">
               <Card className="border-0 transition-all hover:border-gray-600">
@@ -172,54 +144,8 @@ export default function EarningsPage() {
               </Card>
             </Link>
 
-            {/* Earnings This Month */}
-            <button
-              type="button"
-              onClick={() =>
-                openDrawer(
-                  'This Month',
-                  thisMonthTransactions,
-                  mockEarningsBalance.earningsThisMonth
-                )
-              }
-              aria-label="View this month's earnings details"
-              className="text-left"
-            >
-              <Card className="border-0 transition-all hover:border-gray-600">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">THIS MONTH</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mb-2 text-2xl font-bold">
-                    {formatCurrency(mockEarningsBalance.earningsThisMonth)}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    {thisMonthTransactions.length} transactions
-                  </p>
-                  <p
-                    className="mt-2 flex items-center gap-1 text-xs"
-                    style={{ color: COLORS.primary }}
-                  >
-                    View details
-                    <ExternalLink className="h-3 w-3" />
-                  </p>
-                </CardContent>
-              </Card>
-            </button>
-
             {/* Last Payout */}
-            <button
-              type="button"
-              onClick={() =>
-                openDrawer(
-                  'Last Payout',
-                  lastPayoutTransactions,
-                  mockEarningsBalance.lastPayoutAmount
-                )
-              }
-              aria-label="View last payout details"
-              className="text-left"
-            >
+            <Link href="/earnings/payouts/latest">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm">LAST PAYOUT</CardTitle>
@@ -240,16 +166,18 @@ export default function EarningsPage() {
                       })}
                     </p>
                   )}
-                  <p
+                  <button
+                    type="button"
+                    aria-label="View last payout details"
                     className="mt-2 flex items-center gap-1 text-xs"
                     style={{ color: COLORS.primary }}
                   >
                     View details
                     <ExternalLink className="h-3 w-3" />
-                  </p>
+                  </button>
                 </CardContent>
               </Card>
-            </button>
+            </Link>
 
             {/* Streaming & Downloads */}
             <Link href="/earnings/streaming">
@@ -466,17 +394,6 @@ export default function EarningsPage() {
           </Card>
         </div>
       </div>
-
-      {/* Drawer for KPI Details */}
-      {drawerData && (
-        <EarningsDetailDrawer
-          open={drawerOpen}
-          onOpenChange={setDrawerOpen}
-          title={drawerData.title}
-          transactions={drawerData.transactions}
-          totalAmount={drawerData.totalAmount}
-        />
-      )}
 
       {/* Reports Drawer */}
       <ReportsDrawer

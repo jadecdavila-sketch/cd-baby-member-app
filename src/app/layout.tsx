@@ -52,7 +52,7 @@ const testNational2Narrow = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'CDBaby Analytics',
+  title: 'CDBABY Member App',
   description:
     'Your creative command center – insights, trends, and next steps',
 };
