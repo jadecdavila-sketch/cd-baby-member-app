@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
+import { getAssetPath } from '@/shared/utils/asset-path';
+
 const navItems = [
   { href: '/', icon: '1-home.svg', label: 'Home' },
   { href: '/releases', icon: '2-releases.svg', label: 'Releases' },
@@ -48,7 +50,7 @@ export function SidebarNav() {
             >
               <div className="relative h-7 w-7">
                 <Image
-                  src={`/assets/main-nav-icons/${item.icon}`}
+                  src={getAssetPath(`/assets/main-nav-icons/${item.icon}`)}
                   alt={item.label}
                   width={28}
                   height={28}

@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
+import { getAssetPath } from '@/shared/utils/asset-path';
+
 import type { DSP } from '../mock-data';
 
 interface PlatformIconProps {
@@ -56,7 +58,7 @@ export function PlatformIcon({
   };
 
   // Logo file paths
-  const logoPath = `/assets/platforms/${platform}.svg`;
+  const logoPath = getAssetPath(`/assets/platforms/${platform}.svg`);
 
   // If logo exists and hasn't errored, show it
   if (!hasError) {

@@ -5,17 +5,11 @@ import Link from 'next/link';
 
 import { Button } from '@/shared/components/shadcn';
 import { cn } from '@/shared/utils/index';
+import { getAssetPath } from '@/shared/utils/asset-path';
 
 interface HeaderProps {
   className?: string;
 }
-
-// Helper function to add basePath for production
-const getAssetPath = (path: string) => {
-  const basePath =
-    process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
-  return `${basePath}${path}`;
-};
 
 export function Header({ className }: HeaderProps) {
   const notificationCount: number = 0;
