@@ -247,7 +247,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                         {timeframe.type === 'monthly' && (
                           <div className="grid grid-cols-2 gap-2">
                             <Select
-                              value={timeframe.month}
+                              value={timeframe.month ?? ''}
                               onValueChange={(value) =>
                                 setSelectedTimeframes((prev) => ({
                                   ...prev,
@@ -267,7 +267,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                               </SelectContent>
                             </Select>
                             <Select
-                              value={timeframe.year}
+                              value={timeframe.year ?? ''}
                               onValueChange={(value) =>
                                 setSelectedTimeframes((prev) => ({
                                   ...prev,
@@ -292,7 +292,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                         {timeframe.type === 'quarterly' && (
                           <div className="grid grid-cols-2 gap-2">
                             <Select
-                              value={timeframe.quarter}
+                              value={timeframe.quarter ?? ''}
                               onValueChange={(value) =>
                                 setSelectedTimeframes((prev) => ({
                                   ...prev,
@@ -312,7 +312,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                               </SelectContent>
                             </Select>
                             <Select
-                              value={timeframe.year}
+                              value={timeframe.year ?? ''}
                               onValueChange={(value) =>
                                 setSelectedTimeframes((prev) => ({
                                   ...prev,
@@ -336,7 +336,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
 
                         {timeframe.type === 'yearly' && (
                           <Select
-                            value={timeframe.year}
+                            value={timeframe.year ?? ''}
                             onValueChange={(value) =>
                               setSelectedTimeframes((prev) => ({
                                 ...prev,
@@ -359,7 +359,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
 
                         {timeframe.type === 'specific-payout' && (
                           <Select
-                            value={timeframe.payout}
+                            value={timeframe.payout ?? ''}
                             onValueChange={(value) =>
                               setSelectedTimeframes((prev) => ({
                                 ...prev,
