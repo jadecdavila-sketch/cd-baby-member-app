@@ -57,6 +57,8 @@ export interface Video {
   videoUrl: string;
   creations: number;
   views: number;
+  likes: number;
+  shares: number;
   creator: string;
 }
 
@@ -356,6 +358,8 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://tiktok.com/@creator1/video1',
     creations: 1823,
     views: 289456,
+    likes: 45678,
+    shares: 8901,
     creator: '@musiclover23',
   },
   {
@@ -366,6 +370,8 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://instagram.com/reel/abc123',
     creations: 1534,
     views: 245678,
+    likes: 38912,
+    shares: 7654,
     creator: '@beachvibes',
   },
   {
@@ -376,6 +382,8 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://youtube.com/shorts/xyz789',
     creations: 1289,
     views: 198765,
+    likes: 31234,
+    shares: 6543,
     creator: '@urbanexplorer',
   },
   {
@@ -386,6 +394,8 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://tiktok.com/@creator2/video2',
     creations: 1045,
     views: 167890,
+    likes: 27456,
+    shares: 5432,
     creator: '@nightowl88',
   },
   {
@@ -396,6 +406,8 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://instagram.com/reel/def456',
     creations: 923,
     views: 145678,
+    likes: 23890,
+    shares: 4567,
     creator: '@sunsetdreamer',
   },
 ];
