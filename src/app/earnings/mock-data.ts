@@ -1,0 +1,386 @@
+// Mock data for earnings dashboard
+export type EarningType = 'streaming' | 'social-video';
+export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+export type DSP =
+  | 'spotify'
+  | 'apple-music'
+  | 'tiktok'
+  | 'youtube-music'
+  | 'youtube-content-id'
+  | 'youtube-shorts'
+  | 'instagram'
+  | 'facebook'
+  | 'amazon';
+
+export interface EarningsBalance {
+  currentBalance: number;
+  payoutThreshold: number;
+  totalAllTimeEarnings: number;
+  earningsThisMonth: number;
+  lastPayoutAmount: number;
+  lastPayoutDate: string | null;
+  nextPayoutDate: string | null;
+}
+
+export interface EarningTypeBreakdown {
+  type: EarningType;
+  amount: number;
+  percentage: number;
+}
+
+export interface EarningsByPlatform {
+  platform: DSP;
+  amount: number;
+  streams?: number;
+  views?: number;
+}
+
+export interface TrackEarning {
+  trackId: string;
+  trackName: string;
+  artistName: string;
+  amount: number;
+  streams: number;
+}
+
+export interface ReleaseEarning {
+  releaseId: string;
+  releaseName: string;
+  artistName: string;
+  amount: number;
+  tracks: TrackEarning[];
+}
+
+export interface EarningsTransaction {
+  id: string;
+  date: string;
+  platform: DSP;
+  earningType: EarningType;
+  amount: number;
+  trackName?: string;
+  artistName?: string;
+  releaseId?: string;
+  streams?: number;
+  views?: number;
+}
+
+export interface Payout {
+  id: string;
+  payoutDate: string;
+  status: PayoutStatus;
+  grossAmount: number;
+  fees: number;
+  taxWithholding: number;
+  netAmount: number;
+  earningTypeBreakdown: EarningTypeBreakdown[];
+  platformBreakdown: EarningsByPlatform[];
+  releaseBreakdown: ReleaseEarning[];
+  periodStart: string;
+  periodEnd: string;
+}
+
+// Mock current balance (under threshold, eligible on 11/30)
+export const mockEarningsBalance: EarningsBalance = {
+  currentBalance: 8.47,
+  payoutThreshold: 10.0,
+  totalAllTimeEarnings: 12456.89,
+  earningsThisMonth: 284.56,
+  lastPayoutAmount: 1245.67,
+  lastPayoutDate: '2025-10-01',
+  nextPayoutDate: '2025-11-30',
+};
+
+// Mock earning type breakdown
+export const mockEarningTypeBreakdown: EarningTypeBreakdown[] = [
+  {
+    type: 'streaming',
+    amount: 678.45,
+    percentage: 80.1,
+  },
+  {
+    type: 'social-video',
+    amount: 168.78,
+    percentage: 19.9,
+  },
+];
+
+// Mock recent transactions (last 30 days)
+export const mockRecentTransactions: EarningsTransaction[] = [
+  {
+    id: '1',
+    date: '2025-11-03',
+    platform: 'spotify',
+    earningType: 'streaming',
+    amount: 45.23,
+    trackName: 'Midnight Drive',
+    artistName: 'Jade Davis',
+    releaseId: '1',
+    streams: 15234,
+  },
+  {
+    id: '2',
+    date: '2025-11-02',
+    platform: 'tiktok',
+    earningType: 'social-video',
+    amount: 32.45,
+    trackName: 'Ocean Waves',
+    artistName: 'Luna Wave',
+    releaseId: '4',
+    views: 289456,
+  },
+  {
+    id: '3',
+    date: '2025-11-02',
+    platform: 'apple-music',
+    earningType: 'streaming',
+    amount: 38.67,
+    trackName: 'City Lights',
+    artistName: 'Jade Davis',
+    releaseId: '2',
+    streams: 12456,
+  },
+  {
+    id: '4',
+    date: '2025-11-01',
+    platform: 'youtube-content-id',
+    earningType: 'social-video',
+    amount: 28.9,
+    trackName: 'Neon Dreams',
+    artistName: 'The Midnight Owls',
+    releaseId: '3',
+    views: 145678,
+  },
+  {
+    id: '5',
+    date: '2025-10-31',
+    platform: 'spotify',
+    earningType: 'streaming',
+    amount: 41.56,
+    trackName: 'Golden Hour',
+    artistName: 'Jade Davis',
+    releaseId: '1',
+    streams: 13892,
+  },
+  {
+    id: '6',
+    date: '2025-10-30',
+    platform: 'instagram',
+    earningType: 'social-video',
+    amount: 19.34,
+    trackName: 'Midnight Drive',
+    artistName: 'Jade Davis',
+    releaseId: '1',
+    views: 98765,
+  },
+  {
+    id: '7',
+    date: '2025-10-29',
+    platform: 'amazon',
+    earningType: 'streaming',
+    amount: 15.78,
+    trackName: 'Ocean Waves',
+    artistName: 'Luna Wave',
+    releaseId: '4',
+    streams: 5234,
+  },
+  {
+    id: '8',
+    date: '2025-10-28',
+    platform: 'youtube-shorts',
+    earningType: 'social-video',
+    amount: 22.67,
+    trackName: 'City Lights',
+    artistName: 'Jade Davis',
+    releaseId: '2',
+    views: 112345,
+  },
+];
+
+// Mock payout history
+export const mockPayoutHistory: Payout[] = [
+  {
+    id: 'payout-001',
+    payoutDate: '2025-10-01',
+    status: 'completed',
+    grossAmount: 1289.45,
+    fees: 38.68,
+    taxWithholding: 5.1,
+    netAmount: 1245.67,
+    periodStart: '2025-07-01',
+    periodEnd: '2025-09-30',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 1031.56, percentage: 80.0 },
+      { type: 'social-video', amount: 257.89, percentage: 20.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 534.23, streams: 178945 },
+      { platform: 'apple-music', amount: 312.45, streams: 104567 },
+      { platform: 'tiktok', amount: 156.78, views: 1245678 },
+      { platform: 'youtube-content-id', amount: 89.34, views: 567890 },
+      { platform: 'amazon', amount: 98.67, streams: 32456 },
+      { platform: 'youtube-music', amount: 67.89, streams: 22789 },
+      { platform: 'instagram', amount: 30.09, views: 234567 },
+    ],
+    releaseBreakdown: [
+      {
+        releaseId: '1',
+        releaseName: 'Summer Nights',
+        artistName: 'Jade Davis',
+        amount: 645.23,
+        tracks: [
+          {
+            trackId: '1',
+            trackName: 'Midnight Drive',
+            artistName: 'Jade Davis',
+            amount: 423.45,
+            streams: 142345,
+          },
+          {
+            trackId: '5',
+            trackName: 'Golden Hour',
+            artistName: 'Jade Davis',
+            amount: 221.78,
+            streams: 74567,
+          },
+        ],
+      },
+      {
+        releaseId: '4',
+        releaseName: 'Horizons',
+        artistName: 'Luna Wave',
+        amount: 389.56,
+        tracks: [
+          {
+            trackId: '2',
+            trackName: 'Ocean Waves',
+            artistName: 'Luna Wave',
+            amount: 389.56,
+            streams: 130789,
+          },
+        ],
+      },
+      {
+        releaseId: '2',
+        releaseName: 'City Lights',
+        artistName: 'Jade Davis',
+        amount: 156.34,
+        tracks: [
+          {
+            trackId: '3',
+            trackName: 'City Lights',
+            artistName: 'Jade Davis',
+            amount: 156.34,
+            streams: 52456,
+          },
+        ],
+      },
+      {
+        releaseId: '3',
+        releaseName: 'Echoes',
+        artistName: 'The Midnight Owls',
+        amount: 98.32,
+        tracks: [
+          {
+            trackId: '4',
+            trackName: 'Neon Dreams',
+            artistName: 'The Midnight Owls',
+            amount: 98.32,
+            streams: 33012,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'payout-002',
+    payoutDate: '2025-07-01',
+    status: 'completed',
+    grossAmount: 956.78,
+    fees: 28.7,
+    taxWithholding: 3.82,
+    netAmount: 924.26,
+    periodStart: '2025-04-01',
+    periodEnd: '2025-06-30',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 765.42, percentage: 80.0 },
+      { type: 'social-video', amount: 191.36, percentage: 20.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 401.34, streams: 134567 },
+      { platform: 'apple-music', amount: 234.56, streams: 78456 },
+      { platform: 'tiktok', amount: 123.45, views: 987654 },
+      { platform: 'youtube-content-id', amount: 89.12, views: 456789 },
+      { platform: 'amazon', amount: 67.89, streams: 22345 },
+      { platform: 'youtube-music', amount: 40.42, streams: 13567 },
+    ],
+    releaseBreakdown: [],
+  },
+];
+
+// Helper function to format currency
+export function formatCurrency(amount: number): string {
+  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+// Helper function to get earning type label
+export function getEarningTypeLabel(type: EarningType): string {
+  const labels: Record<EarningType, string> = {
+    streaming: 'Streaming & Downloads',
+    'social-video': 'Social Video',
+  };
+  return labels[type];
+}
+
+// Helper function to get platform display name
+export function getPlatformName(platform: DSP): string {
+  const names: Record<DSP, string> = {
+    spotify: 'Spotify',
+    'apple-music': 'Apple Music',
+    tiktok: 'TikTok',
+    'youtube-music': 'YouTube Music',
+    'youtube-content-id': 'YouTube Content ID',
+    'youtube-shorts': 'YouTube Shorts',
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    amazon: 'Amazon Music',
+  };
+  return names[platform];
+}
+
+// Helper function to get payout status label
+export function getPayoutStatusLabel(status: PayoutStatus): string {
+  const labels: Record<PayoutStatus, string> = {
+    pending: 'Pending',
+    processing: 'Processing',
+    completed: 'Completed',
+    failed: 'Failed',
+  };
+  return labels[status];
+}
+
+// Helper function to calculate progress to payout
+export function calculatePayoutProgress(
+  currentBalance: number,
+  threshold: number
+): number {
+  return Math.min((currentBalance / threshold) * 100, 100);
+}
+
+// Time series data for earnings chart
+export interface EarningsTimeSeriesData {
+  date: string;
+  streaming: number;
+  socialVideo: number;
+}
+
+// Mock time series data (last 7 days) - smoother progression
+export const mockEarningsTimeSeries: EarningsTimeSeriesData[] = [
+  { date: '2025-10-28', streaming: 22.15, socialVideo: 5.5 },
+  { date: '2025-10-29', streaming: 23.4, socialVideo: 5.75 },
+  { date: '2025-10-30', streaming: 24.2, socialVideo: 6.1 },
+  { date: '2025-10-31', streaming: 25.8, socialVideo: 6.4 },
+  { date: '2025-11-01', streaming: 26.5, socialVideo: 6.65 },
+  { date: '2025-11-02', streaming: 27.2, socialVideo: 6.9 },
+  { date: '2025-11-03', streaming: 28.1, socialVideo: 7.15 },
+];
