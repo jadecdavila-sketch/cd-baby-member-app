@@ -20,12 +20,13 @@ interface TopTracksProps {
 }
 
 export function TopTracks({ tracks }: TopTracksProps) {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
+  type TrackMetricType = 'streams' | 'creations' | 'views';
+  const [selectedMetric, setSelectedMetric] = useState<TrackMetricType>('streams');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
+  const metricOptions: TrackMetricType[] = ['streams', 'creations', 'views'];
 
-  const getColor = (metric: MetricType) => {
+  const getColor = (metric: TrackMetricType) => {
     switch (metric) {
       case 'streams':
         return 'var(--cdbaby-light-blue)';
