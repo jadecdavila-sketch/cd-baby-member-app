@@ -12,7 +12,7 @@ export type DSP =
   | 'facebook'
   | 'amazon';
 
-export type MetricType = 'streams' | 'creations' | 'views';
+export type MetricType = 'streams' | 'creations' | 'views' | 'likes' | 'shares';
 
 export interface KPI {
   type: MetricType;
@@ -525,6 +525,8 @@ export function getMetricLabel(type: MetricType): string {
     streams: 'Streams',
     creations: 'Creations',
     views: 'Views',
+    likes: 'Likes',
+    shares: 'Shares',
   };
   return labels[type];
 }
