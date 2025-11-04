@@ -12,7 +12,7 @@ export type DSP =
   | 'facebook'
   | 'amazon';
 
-export type MetricType = 'streams' | 'creations' | 'views' | 'likes' | 'shares';
+export type MetricType = 'streams' | 'creations' | 'views';
 
 export interface KPI {
   type: MetricType;
@@ -26,8 +26,6 @@ export interface TimeSeriesDataPoint {
   streams: number;
   creations: number;
   views: number;
-  likes: number;
-  shares: number;
 }
 
 export interface GeographicData {
@@ -36,22 +34,19 @@ export interface GeographicData {
   streams: number;
   creations: number;
   views: number;
-  likes: number;
-  shares: number;
 }
 
 export interface Track {
   id: string;
   name: string;
   artist: string;
+  releaseId: string;
   releaseDate: string;
   artworkUrl: string;
   trackUrl?: string;
   streams: number;
   creations: number;
   views: number;
-  likes: number;
-  shares: number;
 }
 
 export interface Video {
@@ -62,8 +57,6 @@ export interface Video {
   videoUrl: string;
   creations: number;
   views: number;
-  likes: number;
-  shares: number;
   creator: string;
 }
 
@@ -98,6 +91,8 @@ export interface Release {
   artistId: string;
   artworkUrl: string;
   releaseDate: string;
+  type: 'album' | 'single';
+  trackIds?: string[]; // Track IDs that belong to this release
 }
 
 // Mock Artists
@@ -127,6 +122,8 @@ export const mockReleases: Release[] = [
     artistId: '1',
     artworkUrl: 'https://picsum.photos/seed/album1/300/300',
     releaseDate: '2024-06-15',
+    type: 'album',
+    trackIds: ['1', '5'], // Midnight Drive, Golden Hour
   },
   {
     id: '2',
@@ -134,6 +131,8 @@ export const mockReleases: Release[] = [
     artistId: '1',
     artworkUrl: 'https://picsum.photos/seed/album2/300/300',
     releaseDate: '2024-08-20',
+    type: 'single',
+    trackIds: ['3'], // City Lights
   },
   {
     id: '3',
@@ -141,6 +140,8 @@ export const mockReleases: Release[] = [
     artistId: '2',
     artworkUrl: 'https://picsum.photos/seed/album3/300/300',
     releaseDate: '2024-05-10',
+    type: 'single',
+    trackIds: ['4'], // Neon Dreams
   },
   {
     id: '4',
@@ -148,6 +149,8 @@ export const mockReleases: Release[] = [
     artistId: '3',
     artworkUrl: 'https://picsum.photos/seed/album4/300/300',
     releaseDate: '2024-07-01',
+    type: 'single',
+    trackIds: ['2'], // Ocean Waves
   },
 ];
 
@@ -171,18 +174,6 @@ export const mockKPIs: KPI[] = [
     previous: 734201,
     percentChange: 21.6,
   },
-  {
-    type: 'likes',
-    current: 67234,
-    previous: 52108,
-    percentChange: 29.0,
-  },
-  {
-    type: 'shares',
-    current: 12456,
-    previous: 9823,
-    percentChange: 26.8,
-  },
 ];
 
 // Mock Time Series Data (7 days)
@@ -192,56 +183,42 @@ export const mockTimeSeriesData: TimeSeriesDataPoint[] = [
     streams: 15234,
     creations: 623,
     views: 112345,
-    likes: 8456,
-    shares: 1567,
   },
   {
     date: '2025-10-08',
     streams: 16789,
     creations: 678,
     views: 123456,
-    likes: 9234,
-    shares: 1789,
   },
   {
     date: '2025-10-09',
     streams: 18234,
     creations: 712,
     views: 135678,
-    likes: 10123,
-    shares: 1923,
   },
   {
     date: '2025-10-10',
     streams: 19567,
     creations: 745,
     views: 142345,
-    likes: 10789,
-    shares: 2034,
   },
   {
     date: '2025-10-11',
     streams: 17923,
     creations: 689,
     views: 128456,
-    likes: 9678,
-    shares: 1856,
   },
   {
     date: '2025-10-12',
     streams: 19234,
     creations: 734,
     views: 138234,
-    likes: 10345,
-    shares: 1978,
   },
   {
     date: '2025-10-13',
     streams: 18866,
     creations: 642,
     views: 111942,
-    likes: 8609,
-    shares: 2309,
   },
 ];
 
@@ -253,8 +230,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 42345,
     creations: 1823,
     views: 356789,
-    likes: 26834,
-    shares: 4978,
   },
   {
     country: 'Brazil',
@@ -262,8 +237,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 28456,
     creations: 1245,
     views: 245678,
-    likes: 18456,
-    shares: 3456,
   },
   {
     country: 'United Kingdom',
@@ -271,8 +244,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 18234,
     creations: 678,
     views: 134567,
-    likes: 10123,
-    shares: 1923,
   },
   {
     country: 'Germany',
@@ -280,8 +251,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 12456,
     creations: 456,
     views: 98765,
-    likes: 7456,
-    shares: 1456,
   },
   {
     country: 'Mexico',
@@ -289,8 +258,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 9823,
     creations: 389,
     views: 78234,
-    likes: 5923,
-    shares: 1123,
   },
   {
     country: 'Canada',
@@ -298,8 +265,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 8567,
     creations: 312,
     views: 67890,
-    likes: 5123,
-    shares: 978,
   },
   {
     country: 'France',
@@ -307,8 +272,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 6789,
     creations: 267,
     views: 56789,
-    likes: 4289,
-    shares: 823,
   },
   {
     country: 'Japan',
@@ -316,8 +279,6 @@ export const mockGeographicData: GeographicData[] = [
     streams: 5234,
     creations: 201,
     views: 45678,
-    likes: 3456,
-    shares: 656,
   },
 ];
 
@@ -327,66 +288,61 @@ export const mockTopTracks: Track[] = [
     id: '1',
     name: 'Midnight Drive',
     artist: 'Jade Davis',
+    releaseId: '1', // Summer Nights album
     releaseDate: '2024-06-15',
     artworkUrl: 'https://picsum.photos/seed/track1/300/300',
     trackUrl: 'https://open.spotify.com/track/example1',
     streams: 45823,
     creations: 1823,
     views: 289456,
-    likes: 21834,
-    shares: 4123,
   },
   {
     id: '2',
     name: 'Ocean Waves',
     artist: 'Luna Wave',
+    releaseId: '4', // Horizons single
     releaseDate: '2024-07-01',
     artworkUrl: 'https://picsum.photos/seed/track2/300/300',
     trackUrl: 'https://open.spotify.com/track/example2',
     streams: 38456,
     creations: 1534,
     views: 245678,
-    likes: 18456,
-    shares: 3456,
   },
   {
     id: '3',
     name: 'City Lights',
     artist: 'Jade Davis',
+    releaseId: '2', // City Lights single
     releaseDate: '2024-08-20',
     artworkUrl: 'https://picsum.photos/seed/track3/300/300',
     trackUrl: 'https://open.spotify.com/track/example3',
     streams: 32145,
     creations: 1289,
     views: 198765,
-    likes: 14923,
-    shares: 2789,
   },
   {
     id: '4',
     name: 'Neon Dreams',
     artist: 'The Midnight Owls',
+    releaseId: '3', // Echoes single
     releaseDate: '2024-05-10',
     artworkUrl: 'https://picsum.photos/seed/track4/300/300',
     trackUrl: 'https://open.spotify.com/track/example4',
     streams: 27834,
     creations: 1045,
     views: 167890,
-    likes: 12645,
-    shares: 2345,
   },
   {
     id: '5',
     name: 'Golden Hour',
     artist: 'Jade Davis',
+    releaseId: '1', // Summer Nights album
     releaseDate: '2024-06-15',
     artworkUrl: 'https://picsum.photos/seed/track5/300/300',
     trackUrl: 'https://open.spotify.com/track/example5',
     streams: 23567,
     creations: 923,
     views: 145678,
-    likes: 10923,
-    shares: 2034,
   },
 ];
 
@@ -400,8 +356,6 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://tiktok.com/@creator1/video1',
     creations: 1823,
     views: 289456,
-    likes: 21834,
-    shares: 4123,
     creator: '@musiclover23',
   },
   {
@@ -412,8 +366,6 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://instagram.com/reel/abc123',
     creations: 1534,
     views: 245678,
-    likes: 18456,
-    shares: 3456,
     creator: '@beachvibes',
   },
   {
@@ -424,8 +376,6 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://youtube.com/shorts/xyz789',
     creations: 1289,
     views: 198765,
-    likes: 14923,
-    shares: 2789,
     creator: '@urbanexplorer',
   },
   {
@@ -436,8 +386,6 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://tiktok.com/@creator2/video2',
     creations: 1045,
     views: 167890,
-    likes: 12645,
-    shares: 2345,
     creator: '@nightowl88',
   },
   {
@@ -448,8 +396,6 @@ export const mockTopVideos: Video[] = [
     videoUrl: 'https://instagram.com/reel/def456',
     creations: 923,
     views: 145678,
-    likes: 10923,
-    shares: 2034,
     creator: '@sunsetdreamer',
   },
 ];
@@ -567,8 +513,6 @@ export function getMetricLabel(type: MetricType): string {
     streams: 'Streams',
     creations: 'Creations',
     views: 'Views',
-    likes: 'Likes',
-    shares: 'Shares',
   };
   return labels[type];
 }

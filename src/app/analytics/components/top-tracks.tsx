@@ -23,13 +23,7 @@ export function TopTracks({ tracks }: TopTracksProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const metricOptions: MetricType[] = [
-    'streams',
-    'creations',
-    'views',
-    'likes',
-    'shares',
-  ];
+  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -39,10 +33,6 @@ export function TopTracks({ tracks }: TopTracksProps) {
         return 'var(--cdbaby-purple)';
       case 'views':
         return 'var(--cdbaby-green)';
-      case 'likes':
-        return 'var(--cdbaby-pink)';
-      case 'shares':
-        return 'var(--cdbaby-orange)';
       default:
         return 'var(--cdbaby-light-blue)';
     }
@@ -94,18 +84,18 @@ export function TopTracks({ tracks }: TopTracksProps) {
 
           {/* Search Input */}
           <div className="relative">
-            <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search tracks or artists..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-muted/50 border-border placeholder:text-muted-foreground focus:border-[var(--cdbaby-light-blue)] w-full rounded-lg border px-10 py-2 text-sm transition-colors focus:outline-none"
+              className="bg-muted/50 border-border placeholder:text-muted-foreground w-full rounded-lg border px-10 py-2 text-sm transition-colors focus:border-[var(--cdbaby-light-blue)] focus:outline-none"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium transition-colors"
+                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 text-xs font-medium transition-colors"
               >
                 Clear
               </button>
@@ -121,11 +111,11 @@ export function TopTracks({ tracks }: TopTracksProps) {
             return (
               <div
                 key={track.id}
-                onClick={() => track.trackUrl && window.open(track.trackUrl, '_blank')}
+                onClick={() =>
+                  track.trackUrl && window.open(track.trackUrl, '_blank')
+                }
                 className={`group flex items-center gap-4 rounded-lg p-3 transition-all duration-300 ${
-                  track.trackUrl
-                    ? 'cursor-pointer hover:bg-muted/50'
-                    : ''
+                  track.trackUrl ? 'hover:bg-muted/50 cursor-pointer' : ''
                 }`}
               >
                 {/* Rank */}
@@ -151,7 +141,11 @@ export function TopTracks({ tracks }: TopTracksProps) {
 
                 {/* Track Info */}
                 <div className="min-w-0 flex-1">
-                  <p className={`truncate font-semibold ${track.trackUrl ? 'underline' : ''}`}>{track.name}</p>
+                  <p
+                    className={`truncate font-semibold ${track.trackUrl ? 'underline' : ''}`}
+                  >
+                    {track.name}
+                  </p>
                   <p className="text-muted-foreground truncate text-sm">
                     {track.artist}
                   </p>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, ChevronDown, X } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronRight, X } from 'lucide-react';
 
 import { Button } from '@/shared/components/shadcn/button';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/shared/components/shadcn/popover';
 import { Card, CardContent } from '@/shared/components/ui/card';
 
-import type { TimeFrame, Artist, Release, DSP } from '../mock-data';
+import type { TimeFrame, Artist, Release, DSP, Track } from '../mock-data';
 
 interface FilterControlsProps {
   timeFrame: TimeFrame;
@@ -20,10 +20,13 @@ interface FilterControlsProps {
   onArtistChange: (artistId: string | null) => void;
   selectedRelease: string | null;
   onReleaseChange: (releaseId: string | null) => void;
+  selectedTracks: string[];
+  onTracksChange: (trackIds: string[]) => void;
   selectedDSP: DSP | null;
   onDSPChange: (dsp: DSP | null) => void;
   artists: Artist[];
   releases: Release[];
+  tracks: Track[];
 }
 
 export function FilterControls({
@@ -33,13 +36,16 @@ export function FilterControls({
   onArtistChange,
   selectedRelease,
   onReleaseChange,
+  selectedTracks,
+  onTracksChange,
   selectedDSP,
   onDSPChange,
   artists,
   releases,
+  tracks,
 }: FilterControlsProps) {
   const [selectedArtists, setSelectedArtists] = useState<string[]>([]);
-  const [selectedReleases, setSelectedReleases] = useState<string[]>([]);
+  const [expandedReleases, setExpandedReleases] = useState<string[]>([]);
   const [selectedDSPs, setSelectedDSPs] = useState<DSP[]>([]);
 
   const timeFrameOptions: { value: TimeFrame; label: string }[] = [
@@ -72,13 +78,43 @@ export function FilterControls({
   };
 
   const toggleRelease = (releaseId: string) => {
-    const newSelection = selectedReleases.includes(releaseId)
-      ? selectedReleases.filter((id) => id !== releaseId)
-      : [...selectedReleases, releaseId];
+    // Toggle expanded state
+    setExpandedReleases((prev) =>
+      prev.includes(releaseId)
+        ? prev.filter((id) => id !== releaseId)
+        : [...prev, releaseId]
+    );
+  };
 
-    setSelectedReleases(newSelection);
-    // For now, just use the first selected release for the parent state
-    onReleaseChange(newSelection.length > 0 ? (newSelection[0] ?? null) : null);
+  const selectAllTracksInRelease = (releaseId: string) => {
+    const release = releases.find((r) => r.id === releaseId);
+    if (!release?.trackIds) return;
+
+    const releaseTrackIds = release.trackIds;
+    const allSelected = releaseTrackIds.every((trackId) =>
+      selectedTracks.includes(trackId)
+    );
+
+    if (allSelected) {
+      // Deselect all tracks in this release
+      onTracksChange(
+        selectedTracks.filter((id) => !releaseTrackIds.includes(id))
+      );
+    } else {
+      // Select all tracks in this release
+      const newSelection = [
+        ...new Set([...selectedTracks, ...releaseTrackIds]),
+      ];
+      onTracksChange(newSelection);
+    }
+  };
+
+  const toggleTrack = (trackId: string) => {
+    const newSelection = selectedTracks.includes(trackId)
+      ? selectedTracks.filter((id) => id !== trackId)
+      : [...selectedTracks, trackId];
+
+    onTracksChange(newSelection);
   };
 
   const toggleDSP = (dsp: DSP) => {
@@ -93,7 +129,7 @@ export function FilterControls({
 
   const clearAllFilters = () => {
     setSelectedArtists([]);
-    setSelectedReleases([]);
+    onTracksChange([]);
     setSelectedDSPs([]);
     onArtistChange(null);
     onReleaseChange(null);
@@ -108,8 +144,33 @@ export function FilterControls({
     return releases.find((r) => r.id === id)?.name || '';
   };
 
+  const getTrackName = (id: string) => {
+    return tracks.find((t) => t.id === id)?.name || '';
+  };
+
   const getDSPLabel = (dsp: DSP) => {
     return dspOptions.find((d) => d.value === dsp)?.label || '';
+  };
+
+  const getTracksForRelease = (releaseId: string) => {
+    return tracks.filter((track) => track.releaseId === releaseId);
+  };
+
+  const isReleaseFullySelected = (releaseId: string) => {
+    const release = releases.find((r) => r.id === releaseId);
+    if (!release?.trackIds || release.trackIds.length === 0) return false;
+    return release.trackIds.every((trackId) =>
+      selectedTracks.includes(trackId)
+    );
+  };
+
+  const isReleasePartiallySelected = (releaseId: string) => {
+    const release = releases.find((r) => r.id === releaseId);
+    if (!release?.trackIds || release.trackIds.length === 0) return false;
+    return (
+      release.trackIds.some((trackId) => selectedTracks.includes(trackId)) &&
+      !isReleaseFullySelected(releaseId)
+    );
   };
 
   return (
@@ -208,7 +269,7 @@ export function FilterControls({
               </PopoverContent>
             </Popover>
 
-            {/* Release Filter Chip */}
+            {/* Release Filter Chip - Hierarchical */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -217,62 +278,159 @@ export function FilterControls({
                   className="h-9 gap-2"
                   style={{
                     backgroundColor:
-                      selectedReleases.length > 0 ? '#7fc832' : 'transparent',
+                      selectedTracks.length > 0 ? '#7fc832' : 'transparent',
                     color:
-                      selectedReleases.length > 0
+                      selectedTracks.length > 0
                         ? 'white'
                         : 'rgba(255, 255, 255, 0.7)',
                     borderColor:
-                      selectedReleases.length > 0 ? '#7fc832' : undefined,
+                      selectedTracks.length > 0 ? '#7fc832' : undefined,
                   }}
                 >
-                  Releases
-                  {selectedReleases.length > 0 && (
+                  Releases & Tracks
+                  {selectedTracks.length > 0 && (
                     <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
-                      {selectedReleases.length}
+                      {selectedTracks.length}
                     </span>
                   )}
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-2" align="start">
-                <div className="max-h-64 space-y-1 overflow-y-auto">
-                  {releases.map((release) => (
-                    <button
-                      key={release.id}
-                      onClick={() => toggleRelease(release.id)}
-                      className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors"
-                    >
-                      <div
-                        className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
-                        style={{
-                          backgroundColor: selectedReleases.includes(release.id)
-                            ? '#7fc832'
-                            : 'transparent',
-                          borderColor: selectedReleases.includes(release.id)
-                            ? '#7fc832'
-                            : 'rgba(255, 255, 255, 0.3)',
-                        }}
-                      >
-                        {selectedReleases.includes(release.id) && (
-                          <svg
-                            className="h-3 w-3 text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+              <PopoverContent className="w-80 p-2" align="start">
+                <div className="max-h-96 space-y-1 overflow-y-auto">
+                  {releases.map((release) => {
+                    const releaseTracks = getTracksForRelease(release.id);
+                    const isExpanded = expandedReleases.includes(release.id);
+                    const isFullySelected = isReleaseFullySelected(release.id);
+                    const isPartiallySelected = isReleasePartiallySelected(
+                      release.id
+                    );
+                    const isSingle = release.type === 'single';
+                    const isAlbum = release.type === 'album';
+
+                    return (
+                      <div key={release.id} className="space-y-1">
+                        {/* Release Row */}
+                        <div className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors">
+                          {/* Expand/Collapse Button (only for albums) */}
+                          {isAlbum ? (
+                            <button
+                              onClick={() => toggleRelease(release.id)}
+                              className="flex-shrink-0 rounded p-0.5 hover:bg-white/10"
+                            >
+                              {isExpanded ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </button>
+                          ) : (
+                            <div className="w-5" />
+                          )}
+
+                          {/* Select All Checkbox */}
+                          <button
+                            onClick={() => selectAllTracksInRelease(release.id)}
+                            className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                            style={{
+                              backgroundColor: isFullySelected
+                                ? '#7fc832'
+                                : 'transparent',
+                              borderColor:
+                                isFullySelected || isPartiallySelected
+                                  ? '#7fc832'
+                                  : 'rgba(255, 255, 255, 0.3)',
+                            }}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={3}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
+                            {isFullySelected && (
+                              <svg
+                                className="h-3 w-3 text-white"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={3}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            )}
+                            {isPartiallySelected && (
+                              <svg
+                                className="h-3 w-3 text-white"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={3}
+                                  d="M5 12h14"
+                                />
+                              </svg>
+                            )}
+                          </button>
+
+                          <span className="font-medium">
+                            {release.name}
+                            <span className="text-muted-foreground ml-1 text-xs">
+                              ({release.type === 'album' ? 'Album' : 'Single'})
+                            </span>
+                          </span>
+                        </div>
+
+                        {/* Nested Tracks (only for albums when expanded) */}
+                        {isAlbum && isExpanded && releaseTracks.length > 0 && (
+                          <div className="space-y-1">
+                            {releaseTracks.map((track) => (
+                              <button
+                                key={track.id}
+                                onClick={() => toggleTrack(track.id)}
+                                className="hover:bg-muted flex w-full items-center gap-2 rounded-md py-1.5 text-left text-sm transition-colors"
+                                style={{ paddingLeft: '2.5rem' }}
+                              >
+                                <div
+                                  className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                                  style={{
+                                    backgroundColor: selectedTracks.includes(
+                                      track.id
+                                    )
+                                      ? '#7fc832'
+                                      : 'transparent',
+                                    borderColor: selectedTracks.includes(
+                                      track.id
+                                    )
+                                      ? '#7fc832'
+                                      : 'rgba(255, 255, 255, 0.3)',
+                                  }}
+                                >
+                                  {selectedTracks.includes(track.id) && (
+                                    <svg
+                                      className="h-3 w-3 text-white"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={3}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  )}
+                                </div>
+                                <span className="text-xs">{track.name}</span>
+                              </button>
+                            ))}
+                          </div>
                         )}
                       </div>
-                      <span>{release.name}</span>
-                    </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </PopoverContent>
             </Popover>
@@ -348,7 +506,7 @@ export function FilterControls({
 
             {/* Clear All Button (only show if filters are active) */}
             {(selectedArtists.length > 0 ||
-              selectedReleases.length > 0 ||
+              selectedTracks.length > 0 ||
               selectedDSPs.length > 0) && (
               <Button
                 variant="ghost"
@@ -365,7 +523,7 @@ export function FilterControls({
 
         {/* Active Filter Chips */}
         {(selectedArtists.length > 0 ||
-          selectedReleases.length > 0 ||
+          selectedTracks.length > 0 ||
           selectedDSPs.length > 0) && (
           <div className="mt-3 flex flex-wrap gap-2">
             {selectedArtists.map((artistId) => (
@@ -379,14 +537,14 @@ export function FilterControls({
                 <X className="h-3 w-3" />
               </button>
             ))}
-            {selectedReleases.map((releaseId) => (
+            {selectedTracks.map((trackId) => (
               <button
-                key={releaseId}
-                onClick={() => toggleRelease(releaseId)}
+                key={trackId}
+                onClick={() => toggleTrack(trackId)}
                 className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors"
                 style={{ backgroundColor: '#7fc832', color: 'white' }}
               >
-                {getReleaseName(releaseId)}
+                {getTrackName(trackId)}
                 <X className="h-3 w-3" />
               </button>
             ))}

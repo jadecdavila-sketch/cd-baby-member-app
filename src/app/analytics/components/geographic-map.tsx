@@ -18,7 +18,8 @@ import { getMetricLabel, formatNumber } from '../mock-data';
 
 // Helper function to add basePath for production
 const getAssetPath = (path: string) => {
-  const basePath = process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
+  const basePath =
+    process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
   return `${basePath}${path}`;
 };
 
@@ -34,13 +35,7 @@ export function GeographicMap({ data }: GeographicMapProps) {
     setIsMounted(true);
   }, []);
 
-  const metricOptions: MetricType[] = [
-    'streams',
-    'creations',
-    'views',
-    'likes',
-    'shares',
-  ];
+  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -50,10 +45,6 @@ export function GeographicMap({ data }: GeographicMapProps) {
         return 'var(--cdbaby-purple)';
       case 'views':
         return 'var(--cdbaby-green)';
-      case 'likes':
-        return 'var(--cdbaby-pink)';
-      case 'shares':
-        return 'var(--cdbaby-orange)';
       default:
         return 'var(--cdbaby-light-blue)';
     }

@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  ArrowDown,
-  ArrowUp,
-  Music,
-  Heart,
-  Eye,
-  Share2,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowDown, ArrowUp, Music, Eye, Sparkles } from 'lucide-react';
 
 import { Card, CardContent } from '@/shared/components/ui/card';
 
@@ -27,10 +19,6 @@ export function KPICards({ kpis }: KPICardsProps) {
         return Sparkles;
       case 'views':
         return Eye;
-      case 'likes':
-        return Heart;
-      case 'shares':
-        return Share2;
       default:
         return Music;
     }
@@ -44,10 +32,6 @@ export function KPICards({ kpis }: KPICardsProps) {
         return 'text-[var(--cdbaby-purple)]';
       case 'views':
         return 'text-[var(--cdbaby-green)]';
-      case 'likes':
-        return 'text-[var(--cdbaby-pink)]';
-      case 'shares':
-        return 'text-[var(--cdbaby-orange)]';
       default:
         return 'text-[var(--cdbaby-light-blue)]';
     }
@@ -61,17 +45,13 @@ export function KPICards({ kpis }: KPICardsProps) {
         return 'bg-[var(--cdbaby-purple)]/10';
       case 'views':
         return 'bg-[var(--cdbaby-green)]/10';
-      case 'likes':
-        return 'bg-[var(--cdbaby-pink)]/10';
-      case 'shares':
-        return 'bg-[var(--cdbaby-orange)]/10';
       default:
         return 'bg-[var(--cdbaby-light-blue)]/10';
     }
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {kpis.map((kpi) => {
         const Icon = getIcon(kpi.type);
         const isPositive = kpi.percentChange >= 0;

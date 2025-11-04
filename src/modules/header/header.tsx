@@ -12,7 +12,8 @@ interface HeaderProps {
 
 // Helper function to add basePath for production
 const getAssetPath = (path: string) => {
-  const basePath = process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
+  const basePath =
+    process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
   return `${basePath}${path}`;
 };
 

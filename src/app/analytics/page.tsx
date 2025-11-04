@@ -20,7 +20,6 @@ const GeographicMap = dynamic(
   { ssr: false }
 );
 import { TopTracks } from './components/top-tracks';
-import { TopVideos } from './components/top-videos';
 import { TopPlaylists } from './components/top-playlists';
 import { InsightCard } from './components/insight-card';
 import { ActionCards } from './components/action-cards';
@@ -31,7 +30,6 @@ import {
   mockTimeSeriesData,
   mockGeographicData,
   mockTopTracks,
-  mockTopVideos,
   mockTopPlaylists,
   mockAIInsights,
   mockArtists,
@@ -47,6 +45,7 @@ export default function AnalyticsPage() {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('7d');
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
   const [selectedRelease, setSelectedRelease] = useState<string | null>(null);
+  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [selectedDSP, setSelectedDSP] = useState<DSP | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
@@ -90,8 +89,6 @@ export default function AnalyticsPage() {
       streams: Math.round(point.streams * multiplier),
       creations: Math.round(point.creations * multiplier),
       views: Math.round(point.views * multiplier),
-      likes: Math.round(point.likes * multiplier),
-      shares: Math.round(point.shares * multiplier),
     }));
 
     const filteredGeographicData = mockGeographicData.map((geo) => ({
@@ -99,8 +96,6 @@ export default function AnalyticsPage() {
       streams: Math.round(geo.streams * multiplier),
       creations: Math.round(geo.creations * multiplier),
       views: Math.round(geo.views * multiplier),
-      likes: Math.round(geo.likes * multiplier),
-      shares: Math.round(geo.shares * multiplier),
     }));
 
     const filteredTracks = mockTopTracks
@@ -112,10 +107,9 @@ export default function AnalyticsPage() {
             return false;
           }
         }
-        // Filter by release if selected
-        if (selectedRelease) {
-          const release = mockReleases.find((r) => r.id === selectedRelease);
-          if (release && track.releaseDate !== release.releaseDate) {
+        // Filter by specific tracks if selected
+        if (selectedTracks.length > 0) {
+          if (!selectedTracks.includes(track.id)) {
             return false;
           }
         }
@@ -126,18 +120,6 @@ export default function AnalyticsPage() {
         streams: Math.round(track.streams * multiplier),
         creations: Math.round(track.creations * multiplier),
         views: Math.round(track.views * multiplier),
-        likes: Math.round(track.likes * multiplier),
-        shares: Math.round(track.shares * multiplier),
-      }));
-
-    const filteredVideos = mockTopVideos
-      .filter((video) => !selectedDSP || video.platform === selectedDSP)
-      .map((video) => ({
-        ...video,
-        creations: Math.round(video.creations * multiplier),
-        views: Math.round(video.views * multiplier),
-        likes: Math.round(video.likes * multiplier),
-        shares: Math.round(video.shares * multiplier),
       }));
 
     const filteredPlaylists = mockTopPlaylists
@@ -152,10 +134,9 @@ export default function AnalyticsPage() {
       timeSeriesData: filteredTimeSeriesData,
       geographicData: filteredGeographicData,
       tracks: filteredTracks,
-      videos: filteredVideos,
       playlists: filteredPlaylists,
     };
-  }, [viewMode, timeFrame, selectedArtist, selectedRelease, selectedDSP]);
+  }, [viewMode, timeFrame, selectedArtist, selectedTracks, selectedDSP]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1C1C1C' }}>
@@ -236,29 +217,26 @@ export default function AnalyticsPage() {
                   onArtistChange={setSelectedArtist}
                   selectedRelease={selectedRelease}
                   onReleaseChange={setSelectedRelease}
+                  selectedTracks={selectedTracks}
+                  onTracksChange={setSelectedTracks}
                   selectedDSP={selectedDSP}
                   onDSPChange={setSelectedDSP}
                   artists={mockArtists}
                   releases={mockReleases}
+                  tracks={mockTopTracks}
                 />
               </div>
             )}
             renderMetricsChart={() => (
               <MetricsChart
-                key={`chart-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                key={`chart-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
                 data={filteredData.timeSeriesData}
               />
             )}
             renderTopTracks={() => (
               <TopTracks
-                key={`tracks-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                key={`tracks-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
                 tracks={filteredData.tracks}
-              />
-            )}
-            renderTopVideos={() => (
-              <TopVideos
-                key={`videos-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
-                videos={[]}
               />
             )}
           />
@@ -279,16 +257,19 @@ export default function AnalyticsPage() {
                 onArtistChange={setSelectedArtist}
                 selectedRelease={selectedRelease}
                 onReleaseChange={setSelectedRelease}
+                selectedTracks={selectedTracks}
+                onTracksChange={setSelectedTracks}
                 selectedDSP={selectedDSP}
                 onDSPChange={setSelectedDSP}
                 artists={mockArtists}
                 releases={mockReleases}
+                tracks={mockTopTracks}
               />
             </div>
 
             {/* Metrics Chart */}
             <MetricsChart
-              key={`chart-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+              key={`chart-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
               data={filteredData.timeSeriesData}
             />
 
@@ -300,7 +281,7 @@ export default function AnalyticsPage() {
             {/* Geographic Map - Full Width */}
             {viewMode === 'full' && (
               <GeographicMap
-                key={`geo-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                key={`geo-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
                 data={filteredData.geographicData}
               />
             )}
@@ -310,20 +291,11 @@ export default function AnalyticsPage() {
               <InsightCard insight={mockAIInsights[3]} />
             )}
 
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-              {/* Top Tracks */}
-              <TopTracks
-                key={`tracks-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
-                tracks={filteredData.tracks}
-              />
-
-              {/* Top Videos */}
-              <TopVideos
-                key={`videos-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
-                videos={filteredData.videos}
-              />
-            </div>
+            {/* Top Tracks */}
+            <TopTracks
+              key={`tracks-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
+              tracks={filteredData.tracks}
+            />
 
             {/* Playlist Insight - Full Width */}
             {viewMode === 'full' && mockAIInsights[1] && (
@@ -333,7 +305,7 @@ export default function AnalyticsPage() {
             {/* Top Playlists */}
             {viewMode === 'full' && (
               <TopPlaylists
-                key={`playlists-${timeFrame}-${selectedArtist}-${selectedRelease}-${selectedDSP}`}
+                key={`playlists-${timeFrame}-${selectedArtist}-${selectedTracks.join(',')}-${selectedDSP}`}
                 playlists={filteredData.playlists}
               />
             )}

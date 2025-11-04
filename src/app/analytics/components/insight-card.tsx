@@ -78,7 +78,9 @@ export function InsightCard({ insight }: InsightCardProps) {
         <div className="space-y-4">
           {/* Icon and Title Row */}
           <div className="flex items-center gap-3">
-            <div className={`inline-flex flex-shrink-0 rounded-lg p-3 ${colors.bg}`}>
+            <div
+              className={`inline-flex flex-shrink-0 rounded-lg p-3 ${colors.bg}`}
+            >
               <Icon className={`h-5 w-5 ${colors.icon}`} />
             </div>
             <h3 className="text-lg font-bold">{insight.title}</h3>

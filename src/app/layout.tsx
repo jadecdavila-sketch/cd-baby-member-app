@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { ThemeProvider } from 'next-themes';
 
 import { Header } from '@/modules/header';
+import { SidebarNav } from '@/shared/components/sidebar-nav';
 
 import './globals.css';
 
@@ -52,7 +53,8 @@ const testNational2Narrow = localFont({
 
 export const metadata: Metadata = {
   title: 'CDBaby Analytics',
-  description: 'Your creative command center – insights, trends, and next steps',
+  description:
+    'Your creative command center – insights, trends, and next steps',
 };
 export default function RootLayout({
   children,
@@ -65,7 +67,11 @@ export default function RootLayout({
         className={`${testNational2.variable} ${testNational2Narrow.variable}`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex min-h-screen flex-col">
+          {/* Sidebar Navigation */}
+          <SidebarNav />
+
+          {/* Main app container with left padding for sidebar */}
+          <div className="flex min-h-screen flex-col" style={{ paddingLeft: '70px' }}>
             {/* Header */}
             <Header />
 

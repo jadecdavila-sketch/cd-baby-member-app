@@ -27,7 +27,6 @@ interface IntermediateStateProps {
   renderFilterControls: () => React.ReactNode;
   renderMetricsChart: () => React.ReactNode;
   renderTopTracks: () => React.ReactNode;
-  renderTopVideos: () => React.ReactNode;
 }
 
 // Helper function for asset paths
@@ -43,7 +42,6 @@ export function IntermediateState({
   renderFilterControls,
   renderMetricsChart,
   renderTopTracks,
-  renderTopVideos,
 }: IntermediateStateProps) {
   const goalStreams = 1000;
   const progressPercentage = (currentStreams / goalStreams) * 100;
@@ -123,13 +121,15 @@ export function IntermediateState({
       }
     }
     const firstMilestone = milestones[0];
-    return firstMilestone || {
-      range: '100-500',
-      minStreams: 100,
-      title: 'Experiment & Network',
-      description: 'Try new approaches and connect with communities',
-      actions: [],
-    };
+    return (
+      firstMilestone || {
+        range: '100-500',
+        minStreams: 100,
+        title: 'Experiment & Network',
+        description: 'Try new approaches and connect with communities',
+        actions: [],
+      }
+    );
   };
 
   // Track which milestone range we're actively showing
@@ -148,9 +148,9 @@ export function IntermediateState({
   const streamBasedMilestone = getCurrentMilestone();
 
   // Use the active milestone if set, otherwise use the stream-based one
-  const currentMilestone = getAllMilestones().find(
-    (m) => m.range === activeMilestoneRange
-  ) || streamBasedMilestone;
+  const currentMilestone =
+    getAllMilestones().find((m) => m.range === activeMilestoneRange) ||
+    streamBasedMilestone;
 
   // Initialize active milestone on mount
   useEffect(() => {
@@ -173,7 +173,9 @@ export function IntermediateState({
     setCheckedActions(newChecked);
 
     // Check if all actions in this milestone are now checked
-    const milestone = getAllMilestones().find((m) => m.range === milestoneRange);
+    const milestone = getAllMilestones().find(
+      (m) => m.range === milestoneRange
+    );
     if (milestone) {
       const milestoneActionKeys = milestone.actions.map(
         (_, idx) => `${milestoneRange}-${idx}`
@@ -251,8 +253,8 @@ export function IntermediateState({
               <div className="text-muted-foreground flex items-center gap-2 text-sm">
                 <Sparkles className="h-4 w-4" style={{ color: '#ff386a' }} />
                 <span>
-                  Your music is resonating! Keep up the momentum with the actions
-                  below.
+                  Your music is resonating! Keep up the momentum with the
+                  actions below.
                 </span>
               </div>
             </div>
@@ -377,20 +379,19 @@ export function IntermediateState({
 
               {/* Complete Journey Roadmap */}
               <div className="mt-6 space-y-4">
-                <h5 className="text-sm font-semibold text-muted-foreground">
+                <h5 className="text-muted-foreground text-sm font-semibold">
                   Your Complete Journey to 1,000 Streams
                 </h5>
                 {getAllMilestones().map((milestone, index) => {
                   const isCompleted = currentStreams >= milestone.minStreams;
-                  const isCurrent =
-                    milestone.range === currentMilestone.range;
+                  const isCurrent = milestone.range === currentMilestone.range;
 
                   return (
                     <div key={index} className="relative flex gap-3">
                       {/* Connector Line */}
                       {index < getAllMilestones().length - 1 && (
                         <div
-                          className={`absolute left-3 top-8 h-full w-0.5 transition-colors duration-300 ${
+                          className={`absolute top-8 left-3 h-full w-0.5 transition-colors duration-300 ${
                             isCompleted
                               ? 'bg-[var(--cdbaby-green)]'
                               : 'bg-border'
@@ -411,9 +412,7 @@ export function IntermediateState({
                         {isCompleted ? (
                           <CheckCircle2 className="h-4 w-4" />
                         ) : (
-                          <span className="text-xs font-bold">
-                            {index + 1}
-                          </span>
+                          <span className="text-xs font-bold">{index + 1}</span>
                         )}
                       </div>
 
@@ -471,7 +470,7 @@ export function IntermediateState({
 
               {/* Article Content */}
               <div className="flex min-h-0 flex-1 flex-col">
-                <h3 className="mb-4 flex-shrink-0 text-xl font-[var(--font-test-national-2-narrow)] font-bold uppercase text-black">
+                <h3 className="mb-4 flex-shrink-0 text-xl font-[var(--font-test-national-2-narrow)] font-bold text-black uppercase">
                   Growing Your Fanbase
                 </h3>
 
@@ -502,10 +501,10 @@ export function IntermediateState({
                     <strong>What happens at 1,000 streams?</strong>
                   </p>
                   <p className="mb-3">
-                    Your track becomes eligible for monetization, and you'll join
-                    the top 13% of tracks on Spotify. This milestone opens doors
-                    to playlist consideration and proves market validation for
-                    your sound.
+                    Your track becomes eligible for monetization, and you'll
+                    join the top 13% of tracks on Spotify. This milestone opens
+                    doors to playlist consideration and proves market validation
+                    for your sound.
                   </p>
                 </div>
 
@@ -519,10 +518,8 @@ export function IntermediateState({
       </div>
 
       {/* Top Tracks and Videos - Show Real Data */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {renderTopTracks()}
-        {renderTopVideos()}
-      </div>
+      {/* Top Tracks */}
+      {renderTopTracks()}
 
       {/* Marketing Tools */}
       <Card
@@ -570,9 +567,7 @@ export function IntermediateState({
             style={{ backgroundColor: '#ff8100' }}
           >
             <div className="text-left">
-              <div className="font-semibold text-white">
-                Social Media Kit
-              </div>
+              <div className="font-semibold text-white">Social Media Kit</div>
               <div className="text-xs text-white/90">
                 Ready-made content templates
               </div>

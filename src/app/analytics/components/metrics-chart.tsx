@@ -19,13 +19,7 @@ interface MetricsChartProps {
 export function MetricsChart({ data }: MetricsChartProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
 
-  const metricOptions: MetricType[] = [
-    'streams',
-    'creations',
-    'views',
-    'likes',
-    'shares',
-  ];
+  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
 
   const getColor = (metric: MetricType) => {
     switch (metric) {
@@ -35,10 +29,6 @@ export function MetricsChart({ data }: MetricsChartProps) {
         return '#A855F7';
       case 'views':
         return '#22C55E';
-      case 'likes':
-        return '#F472B6';
-      case 'shares':
-        return '#FB923C';
       default:
         return '#34D5FD';
     }

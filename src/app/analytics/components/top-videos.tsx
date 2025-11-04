@@ -122,9 +122,7 @@ export function TopVideos({ videos }: TopVideosProps) {
                 style={{ color: 'var(--cdbaby-purple)' }}
               />
             </div>
-            <h3 className="mb-2 text-xl font-bold">
-              No Video Creations Yet
-            </h3>
+            <h3 className="mb-2 text-xl font-bold">No Video Creations Yet</h3>
             <p className="text-muted-foreground mb-6 max-w-md text-sm">
               People haven't started creating content with your music yet. Get
               your music in front of potential fans and inspire them to create!
