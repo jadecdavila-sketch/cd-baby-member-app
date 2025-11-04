@@ -28,16 +28,17 @@ interface GeographicMapProps {
 }
 
 export function GeographicMap({ data }: GeographicMapProps) {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>('streams');
+  type GeoMetricType = 'streams' | 'creations' | 'views';
+  const [selectedMetric, setSelectedMetric] = useState<GeoMetricType>('streams');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const metricOptions: MetricType[] = ['streams', 'creations', 'views'];
+  const metricOptions: GeoMetricType[] = ['streams', 'creations', 'views'];
 
-  const getColor = (metric: MetricType) => {
+  const getColor = (metric: GeoMetricType) => {
     switch (metric) {
       case 'streams':
         return 'var(--cdbaby-light-blue)';
