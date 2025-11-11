@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ExternalLink, Download } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 import {
   Card,
@@ -11,12 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/shadcn/button';
 import { COLORS } from '@/shared/constants/theme';
 
 import { PayPointProgress } from './components/pay-point-progress';
 import { PlatformIcon } from './components/platform-icon';
 import { ReportsDrawer } from './components/reports-drawer';
+import { EarningsEmptyState } from './components/earnings-empty-state';
 import {
   mockEarningsBalance,
   mockEarningTypeBreakdown,
@@ -39,6 +39,7 @@ const EarningsChart = dynamic(
 type TimeFrame = 'monthly' | 'yearly' | 'lifetime' | 'quarterly';
 
 export default function EarningsPage() {
+  const [viewMode, setViewMode] = useState<'full' | 'empty'>('full');
   const [reportsDrawerOpen, setReportsDrawerOpen] = useState(false);
 
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('monthly');
@@ -104,21 +105,71 @@ export default function EarningsPage() {
       {/* Page Header */}
       <div style={{ backgroundColor: COLORS.bgDark }}>
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mb-2">
-            <h1 className="text-4xl font-[var(--font-test-national-2-narrow)] font-bold uppercase">
-              EARNINGS
-            </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
-              Track your revenue, payouts, and download reports
-            </p>
+          <div className="mb-2 flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-[var(--font-test-national-2-narrow)] font-bold uppercase">
+                EARNINGS
+              </h1>
+              <p className="text-muted-foreground mt-2 text-lg">
+                Track your revenue, payouts, and download reports
+              </p>
+            </div>
+            {/* Prototype Toggle */}
+            <div className="border-border inline-flex overflow-hidden rounded-lg border">
+              <button
+                onClick={() => setViewMode('full')}
+                className="border-border hover:bg-muted/50 border-r px-3 py-1.5 text-sm font-medium transition-all duration-200"
+                style={{
+                  backgroundColor: viewMode === 'full' ? COLORS.primary : 'transparent',
+                  color: viewMode === 'full' ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                Full Data
+              </button>
+              <button
+                onClick={() => setViewMode('empty')}
+                className="hover:bg-muted/50 px-3 py-1.5 text-sm font-medium transition-all duration-200"
+                style={{
+                  backgroundColor: viewMode === 'empty' ? COLORS.primary : 'transparent',
+                  color: viewMode === 'empty' ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                Empty State
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-6">
-          {/* 4 KPI Cards Grid */}
+        {viewMode === 'empty' ? (
+          <EarningsEmptyState />
+        ) : (
+          <div className="space-y-6">
+            {/* Report Available Banner */}
+            <div
+              className="rounded-lg border p-4"
+              style={{
+                backgroundColor: 'rgba(82, 188, 214, 0.1)',
+                borderColor: COLORS.primary
+              }}
+            >
+              <p className="text-sm">
+                Your Digital Distribution Earnings report is{' '}
+                <button
+                  type="button"
+                  onClick={() => setReportsDrawerOpen(true)}
+                  className="font-medium underline hover:no-underline"
+                  style={{ color: COLORS.primary }}
+                >
+                  now available for download
+                </button>
+                .
+              </p>
+            </div>
+
+            {/* 4 KPI Cards Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Total All-Time Earnings */}
             <Link href="/earnings/history">
@@ -392,7 +443,8 @@ export default function EarningsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Reports Drawer */}

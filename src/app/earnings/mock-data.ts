@@ -80,6 +80,22 @@ export interface Payout {
   periodEnd: string;
 }
 
+// Interfaces for filtering
+export interface Release {
+  id: string;
+  name: string;
+  artistName: string;
+  type: 'album' | 'single';
+  trackIds?: string[];
+}
+
+export interface Track {
+  id: string;
+  name: string;
+  releaseId: string;
+  artistName: string;
+}
+
 // Mock current balance (under threshold, eligible on 11/30)
 export const mockEarningsBalance: EarningsBalance = {
   currentBalance: 8.47,
@@ -126,7 +142,7 @@ export const mockRecentTransactions: EarningsTransaction[] = [
     amount: 32.45,
     trackName: 'Ocean Waves',
     artistName: 'Luna Wave',
-    releaseId: '4',
+    releaseId: '2',
     views: 289456,
   },
   {
@@ -137,7 +153,7 @@ export const mockRecentTransactions: EarningsTransaction[] = [
     amount: 38.67,
     trackName: 'City Lights',
     artistName: 'Jade Davis',
-    releaseId: '2',
+    releaseId: '1',
     streams: 12456,
   },
   {
@@ -181,7 +197,7 @@ export const mockRecentTransactions: EarningsTransaction[] = [
     amount: 15.78,
     trackName: 'Ocean Waves',
     artistName: 'Luna Wave',
-    releaseId: '4',
+    releaseId: '2',
     streams: 5234,
   },
   {
@@ -383,4 +399,39 @@ export const mockEarningsTimeSeries: EarningsTimeSeriesData[] = [
   { date: '2025-11-01', streaming: 26.5, socialVideo: 6.65 },
   { date: '2025-11-02', streaming: 27.2, socialVideo: 6.9 },
   { date: '2025-11-03', streaming: 28.1, socialVideo: 7.15 },
+];
+
+// Mock releases for filtering
+export const mockEarningsReleases: Release[] = [
+  {
+    id: '1',
+    name: 'Night Sessions',
+    artistName: 'Jade Davis',
+    type: 'album',
+    trackIds: ['1', '2', '3'],
+  },
+  {
+    id: '2',
+    name: 'Ocean Waves',
+    artistName: 'Luna Wave',
+    type: 'single',
+    trackIds: ['4'],
+  },
+  {
+    id: '3',
+    name: 'Summer Vibes',
+    artistName: 'Solar Sounds',
+    type: 'album',
+    trackIds: ['5', '6'],
+  },
+];
+
+// Mock tracks for filtering
+export const mockEarningsTracks: Track[] = [
+  { id: '1', name: 'Midnight Drive', releaseId: '1', artistName: 'Jade Davis' },
+  { id: '2', name: 'City Lights', releaseId: '1', artistName: 'Jade Davis' },
+  { id: '3', name: 'Late Night Jazz', releaseId: '1', artistName: 'Jade Davis' },
+  { id: '4', name: 'Ocean Waves', releaseId: '2', artistName: 'Luna Wave' },
+  { id: '5', name: 'Sunset Beach', releaseId: '3', artistName: 'Solar Sounds' },
+  { id: '6', name: 'Tropical Breeze', releaseId: '3', artistName: 'Solar Sounds' },
 ];

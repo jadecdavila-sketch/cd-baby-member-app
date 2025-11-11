@@ -124,13 +124,6 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
     'payout-statement': { type: 'specific-payout', payout: 'payout-1' },
     'publishing-quarterly': { type: 'quarterly', quarter: 'Q4', year: String(currentYear) },
   });
-  const [selectedFormats, setSelectedFormats] = useState<Record<ReportType, string>>({
-    'digital-distribution': 'PDF',
-    'svm': 'PDF',
-    'account-transactions': 'PDF',
-    'payout-statement': 'PDF',
-    'publishing-quarterly': 'PDF',
-  });
 
   const toggleReport = (reportId: ReportType) => {
     setExpandedReport(expandedReport === reportId ? null : reportId);
@@ -145,7 +138,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
 
   const handleGenerate = (reportId: ReportType) => {
     // TODO: Implement report generation
-    console.log('Generate report:', reportId, selectedTimeframes[reportId], selectedFormats[reportId]);
+    console.log('Generate report:', reportId, selectedTimeframes[reportId]);
   };
 
   return (
@@ -382,44 +375,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                       </div>
                     </div>
 
-                    {/* Format Selection */}
-                    {report.formats.length > 1 && (
-                      <div>
-                        <label className="text-muted-foreground block text-xs font-medium mb-2">
-                          Format
-                        </label>
-                        <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
-                          {report.formats.map((format) => (
-                            <button
-                              key={format}
-                              type="button"
-                              onClick={() =>
-                                setSelectedFormats((prev) => ({
-                                  ...prev,
-                                  [report.id]: format,
-                                }))
-                              }
-                              aria-pressed={selectedFormats[report.id] === format}
-                              className="border-border border-r px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
-                              style={{
-                                backgroundColor:
-                                  selectedFormats[report.id] === format
-                                    ? COLORS.primary
-                                    : 'transparent',
-                                color:
-                                  selectedFormats[report.id] === format
-                                    ? COLORS.textWhite
-                                    : COLORS.textGray,
-                              }}
-                            >
-                              {format}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Generate Button */}
+                    {/* Download Button */}
                     <Button
                       className="w-full"
                       size="sm"
@@ -430,7 +386,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
                       }}
                     >
                       <Download className="mr-2 h-4 w-4" />
-                      Generate Report
+                      Download .csv
                     </Button>
                   </div>
                 )}
