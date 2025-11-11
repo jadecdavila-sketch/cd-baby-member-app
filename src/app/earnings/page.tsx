@@ -147,28 +147,6 @@ export default function EarningsPage() {
           <EarningsEmptyState />
         ) : (
           <div className="space-y-6">
-            {/* Report Available Banner */}
-            <div
-              className="rounded-lg border p-4"
-              style={{
-                backgroundColor: 'rgba(82, 188, 214, 0.1)',
-                borderColor: COLORS.primary
-              }}
-            >
-              <p className="text-sm">
-                Your Digital Distribution Earnings report is{' '}
-                <button
-                  type="button"
-                  onClick={() => setReportsDrawerOpen(true)}
-                  className="font-medium underline hover:no-underline"
-                  style={{ color: COLORS.primary }}
-                >
-                  now available for download
-                </button>
-                .
-              </p>
-            </div>
-
             {/* 4 KPI Cards Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Total All-Time Earnings */}
