@@ -13,7 +13,6 @@ import {
   mockPayoutHistory,
   formatCurrency,
   getPlatformName,
-  getPayoutStatusLabel,
   getEarningTypeLabel,
 } from '../../mock-data';
 
@@ -80,7 +79,7 @@ export default async function PayoutDetailsPage({ params }: PayoutDetailsPagePro
               style={{ color: '#52bcd6' }}
             >
               <Download className="h-3 w-3" />
-              Download Statement
+              Download detailed statement
             </button>
           </div>
         </div>
@@ -189,7 +188,36 @@ export default async function PayoutDetailsPage({ params }: PayoutDetailsPagePro
             </CardContent>
           </Card>
 
-          {/* Artist → Release → Track Breakdown */}
+          {/* Artist Breakdown */}
+          {payout.artistBreakdown && payout.artistBreakdown.length > 0 && (
+            <Card className="border-0">
+              <CardHeader>
+                <CardTitle className="text-base">BY ARTIST</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {payout.artistBreakdown.map((artist) => (
+                    <div
+                      key={artist.artistId}
+                      className="flex items-center justify-between rounded-[3px] border border-gray-700 p-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium">{artist.artistName}</span>
+                        <span className="text-muted-foreground text-xs">
+                          {artist.percentage.toFixed(1)}%
+                        </span>
+                      </div>
+                      <span className="font-bold">
+                        {formatCurrency(artist.amount)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Release → Track Breakdown */}
           {payout.releaseBreakdown.length > 0 && (
             <Card className="border-0">
               <CardHeader>

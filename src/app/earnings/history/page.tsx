@@ -35,8 +35,20 @@ export default function EarningsHistoryPage() {
   const [selectedEarningType, setSelectedEarningType] =
     useState<EarningType | null>(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState<Set<DSP>>(new Set());
+  const [selectedArtists, setSelectedArtists] = useState<Set<string>>(new Set());
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [expandedReleases, setExpandedReleases] = useState<string[]>([]);
+
+  // Get unique artists from transactions
+  const artists = useMemo(() => {
+    const artistSet = new Set<string>();
+    for (const t of mockRecentTransactions) {
+      if (t.artistName) {
+        artistSet.add(t.artistName);
+      }
+    }
+    return Array.from(artistSet).sort((a, b) => a.localeCompare(b));
+  }, []);
 
   // Filter transactions
   const filteredTransactions = useMemo(() => {
@@ -50,6 +62,10 @@ export default function EarningsHistoryPage() {
       if (selectedPlatforms.size > 0 && !selectedPlatforms.has(transaction.platform)) {
         return false;
       }
+      // Filter by selected artists
+      if (selectedArtists.size > 0 && transaction.artistName && !selectedArtists.has(transaction.artistName)) {
+        return false;
+      }
       // Filter by selected tracks
       if (selectedTracks.length > 0) {
         const trackName = transaction.trackName;
@@ -60,7 +76,7 @@ export default function EarningsHistoryPage() {
       }
       return true;
     });
-  }, [selectedEarningType, selectedPlatforms, selectedTracks]);
+  }, [selectedEarningType, selectedPlatforms, selectedArtists, selectedTracks]);
 
   // Get unique platforms from transactions
   const platforms = Array.from(
@@ -408,6 +424,102 @@ export default function EarningsHistoryPage() {
                   </Popover>
                 </div>
 
+                {/* Artist Filter */}
+                <div>
+                  <label className="text-muted-foreground mb-2 block text-sm font-medium">
+                    Artist
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-9 gap-2 justify-between"
+                        style={{
+                          backgroundColor:
+                            selectedArtists.size > 0 ? '#ff386a' : 'transparent',
+                          color:
+                            selectedArtists.size > 0
+                              ? 'white'
+                              : 'rgba(255, 255, 255, 0.7)',
+                          borderColor:
+                            selectedArtists.size > 0 ? '#ff386a' : undefined,
+                          minWidth: '140px',
+                        }}
+                      >
+                        <span>
+                          Artists
+                          {selectedArtists.size > 0 && (
+                            <span className="ml-2 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
+                              {selectedArtists.size}
+                            </span>
+                          )}
+                        </span>
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-2" align="start">
+                      <div className="max-h-64 space-y-1 overflow-y-auto">
+                        {artists.map((artist) => (
+                          <button
+                            key={artist}
+                            onClick={() => {
+                              const newSet = new Set(selectedArtists);
+                              if (newSet.has(artist)) {
+                                newSet.delete(artist);
+                              } else {
+                                newSet.add(artist);
+                              }
+                              setSelectedArtists(newSet);
+                            }}
+                            className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors"
+                          >
+                            <div
+                              className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border"
+                              style={{
+                                backgroundColor: selectedArtists.has(artist)
+                                  ? '#ff386a'
+                                  : 'transparent',
+                                borderColor: selectedArtists.has(artist)
+                                  ? '#ff386a'
+                                  : 'rgba(255, 255, 255, 0.3)',
+                              }}
+                            >
+                              {selectedArtists.has(artist) && (
+                                <svg
+                                  className="h-3 w-3 text-white"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={3}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            <span>{artist}</span>
+                          </button>
+                        ))}
+                      </div>
+                      {selectedArtists.size > 0 && (
+                        <div className="border-t border-gray-700 pt-2 mt-2">
+                          <button
+                            onClick={() => setSelectedArtists(new Set())}
+                            className="text-xs w-full text-center py-1"
+                            style={{ color: '#ff386a' }}
+                          >
+                            Clear all
+                          </button>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
                 {/* Releases & Tracks Filter */}
                 <div>
                   <label className="text-muted-foreground mb-2 block text-sm font-medium">
@@ -599,7 +711,7 @@ export default function EarningsHistoryPage() {
           {/* Activity Feed */}
           <Card className="border-0">
             <CardHeader>
-              <CardTitle className="text-base">RECENT ACTIVITY</CardTitle>
+              <CardTitle className="text-base">RECENT ACTIVITY BY TRACK</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -659,24 +771,6 @@ export default function EarningsHistoryPage() {
                             'en-US',
                             {
                               month: 'long',
-                              year: 'numeric',
-                            }
-                          )}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
-                          {new Date(payout.periodStart).toLocaleDateString(
-                            'en-US',
-                            {
-                              month: 'short',
-                              day: 'numeric',
-                            }
-                          )}{' '}
-                          -{' '}
-                          {new Date(payout.periodEnd).toLocaleDateString(
-                            'en-US',
-                            {
-                              month: 'short',
-                              day: 'numeric',
                               year: 'numeric',
                             }
                           )}

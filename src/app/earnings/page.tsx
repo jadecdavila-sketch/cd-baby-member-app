@@ -19,13 +19,14 @@ import { ReportsDrawer } from './components/reports-drawer';
 import { EarningsEmptyState } from './components/earnings-empty-state';
 import {
   mockEarningsBalance,
-  mockEarningTypeBreakdown,
   mockRecentTransactions,
   mockEarningsTimeSeries,
+  mockEarningsByTimeframe,
   formatCurrency,
   getPlatformName,
   getEarningTypeLabel,
   type EarningType,
+  type TimeFrame,
 } from './mock-data';
 
 const EarningsChart = dynamic(
@@ -35,8 +36,6 @@ const EarningsChart = dynamic(
     })),
   { ssr: false }
 );
-
-type TimeFrame = 'monthly' | 'yearly' | 'lifetime' | 'quarterly';
 
 export default function EarningsPage() {
   const [viewMode, setViewMode] = useState<'full' | 'empty'>('full');
@@ -56,12 +55,8 @@ export default function EarningsPage() {
     console.log('Pay point changed to:', newThreshold);
   };
 
-  const streamingBreakdown = mockEarningTypeBreakdown.find(
-    (b) => b.type === 'streaming'
-  );
-  const socialVideoBreakdown = mockEarningTypeBreakdown.find(
-    (b) => b.type === 'social-video'
-  );
+  // Get filtered earnings data based on selected timeframe
+  const filteredEarnings = mockEarningsByTimeframe[timeFrame] ?? mockEarningsByTimeframe.monthly;
 
   // Filter chart data based on timeframe
   const filteredChartData = useMemo(() => {
@@ -147,9 +142,48 @@ export default function EarningsPage() {
           <EarningsEmptyState />
         ) : (
           <div className="space-y-6">
+            {/* Filters Bar - Above all content */}
+            <Card className="border-0">
+              <CardContent className="flex items-center justify-between p-4">
+                {/* Time Frame Filter - Left */}
+                <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
+                  {(['monthly', 'quarterly', 'yearly', 'lifetime'] as const).map(
+                    (frame) => (
+                      <button
+                        key={frame}
+                        onClick={() => setTimeFrame(frame)}
+                        className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
+                        style={{
+                          backgroundColor:
+                            timeFrame === frame ? COLORS.primary : 'transparent',
+                          color:
+                            timeFrame === frame
+                              ? COLORS.textWhite
+                              : COLORS.textGray,
+                        }}
+                      >
+                        {frame.charAt(0).toUpperCase() + frame.slice(1)}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                {/* Detailed Reports - Right */}
+                <button
+                  type="button"
+                  onClick={() => setReportsDrawerOpen(true)}
+                  aria-label="Open reports download menu"
+                  className="text-xs"
+                  style={{ color: COLORS.primary }}
+                >
+                  Detailed Reports
+                </button>
+              </CardContent>
+            </Card>
+
             {/* 4 KPI Cards Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {/* Total All-Time Earnings */}
+            {/* Total Earnings */}
             <Link href="/earnings/history">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
@@ -157,9 +191,11 @@ export default function EarningsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
-                    {formatCurrency(mockEarningsBalance.totalAllTimeEarnings)}
+                    {formatCurrency(filteredEarnings.totalEarnings)}
                   </div>
-                  <p className="text-muted-foreground text-xs">All-time</p>
+                  <p className="text-muted-foreground text-xs">
+                    {timeFrame === 'lifetime' ? 'All-time' : `This ${timeFrame.replace('ly', '')}`}
+                  </p>
                   <button
                     type="button"
                     aria-label="View earnings history"
@@ -167,41 +203,6 @@ export default function EarningsPage() {
                     style={{ color: COLORS.primary }}
                   >
                     View history
-                    <ExternalLink className="h-3 w-3" />
-                  </button>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Last Payout */}
-            <Link href="/earnings/payout/payout-001">
-              <Card className="border-0 transition-all hover:border-gray-600">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">LAST PAYOUT</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mb-2 text-2xl font-bold">
-                    {mockEarningsBalance.lastPayoutAmount > 0
-                      ? formatCurrency(mockEarningsBalance.lastPayoutAmount)
-                      : '—'}
-                  </div>
-                  {mockEarningsBalance.lastPayoutDate && (
-                    <p className="text-muted-foreground text-xs">
-                      {new Date(
-                        mockEarningsBalance.lastPayoutDate
-                      ).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    aria-label="View last payout details"
-                    className="mt-2 flex items-center gap-1 text-xs"
-                    style={{ color: COLORS.primary }}
-                  >
-                    View details
                     <ExternalLink className="h-3 w-3" />
                   </button>
                 </CardContent>
@@ -216,10 +217,10 @@ export default function EarningsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
-                    {formatCurrency(streamingBreakdown?.amount || 0)}
+                    {formatCurrency(filteredEarnings.streaming.amount)}
                   </div>
                   <p className="text-muted-foreground text-xs">
-                    {streamingBreakdown?.percentage.toFixed(1)}% of total
+                    {filteredEarnings.streaming.percentage.toFixed(1)}% of total
                   </p>
                   <p
                     className="mt-2 flex items-center gap-1 text-xs"
@@ -240,10 +241,34 @@ export default function EarningsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
-                    {formatCurrency(socialVideoBreakdown?.amount || 0)}
+                    {formatCurrency(filteredEarnings.socialVideo.amount)}
                   </div>
                   <p className="text-muted-foreground text-xs">
-                    {socialVideoBreakdown?.percentage.toFixed(1)}% of total
+                    {filteredEarnings.socialVideo.percentage.toFixed(1)}% of total
+                  </p>
+                  <p
+                    className="mt-2 flex items-center gap-1 text-xs"
+                    style={{ color: COLORS.primary }}
+                  >
+                    View details
+                    <ExternalLink className="h-3 w-3" />
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Other */}
+            <Link href="/earnings/other">
+              <Card className="border-0 transition-all hover:border-gray-600">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm">OTHER</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-2 text-2xl font-bold">
+                    {formatCurrency(filteredEarnings.other.amount)}
+                  </div>
+                  <p className="text-muted-foreground text-xs">
+                    {filteredEarnings.other.percentage.toFixed(1)}% of total
                   </p>
                   <p
                     className="mt-2 flex items-center gap-1 text-xs"
@@ -283,46 +308,7 @@ export default function EarningsPage() {
             </CardContent>
           </Card>
 
-          {/* Filters Bar - Separate floating card above chart */}
-          <Card className="border-0">
-            <CardContent className="flex items-center justify-between p-4">
-              {/* Time Frame Filter - Left */}
-              <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
-                {(['monthly', 'quarterly', 'yearly', 'lifetime'] as const).map(
-                  (frame) => (
-                    <button
-                      key={frame}
-                      onClick={() => setTimeFrame(frame)}
-                      className="border-border border-r px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 last:border-r-0"
-                      style={{
-                        backgroundColor:
-                          timeFrame === frame ? COLORS.primary : 'transparent',
-                        color:
-                          timeFrame === frame
-                            ? COLORS.textWhite
-                            : COLORS.textGray,
-                      }}
-                    >
-                      {frame.charAt(0).toUpperCase() + frame.slice(1)}
-                    </button>
-                  )
-                )}
-              </div>
-
-              {/* View All Reports - Right */}
-              <button
-                type="button"
-                onClick={() => setReportsDrawerOpen(true)}
-                aria-label="Open reports download menu"
-                className="text-xs"
-                style={{ color: COLORS.primary }}
-              >
-                View All Reports
-              </button>
-            </CardContent>
-          </Card>
-
-          {/* Chart - Separate card below filters with title inside */}
+          {/* Chart */}
           <Card className="border-0">
             <CardHeader className="pb-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

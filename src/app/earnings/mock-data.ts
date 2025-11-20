@@ -1,5 +1,5 @@
 // Mock data for earnings dashboard
-export type EarningType = 'streaming' | 'social-video';
+export type EarningType = 'streaming' | 'social-video' | 'other';
 export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 export type DSP =
@@ -52,6 +52,13 @@ export interface ReleaseEarning {
   tracks: TrackEarning[];
 }
 
+export interface ArtistEarning {
+  artistId: string;
+  artistName: string;
+  amount: number;
+  percentage: number;
+}
+
 export interface EarningsTransaction {
   id: string;
   date: string;
@@ -75,6 +82,7 @@ export interface Payout {
   netAmount: number;
   earningTypeBreakdown: EarningTypeBreakdown[];
   platformBreakdown: EarningsByPlatform[];
+  artistBreakdown: ArtistEarning[];
   releaseBreakdown: ReleaseEarning[];
   periodStart: string;
   periodEnd: string;
@@ -112,12 +120,17 @@ export const mockEarningTypeBreakdown: EarningTypeBreakdown[] = [
   {
     type: 'streaming',
     amount: 678.45,
-    percentage: 80.1,
+    percentage: 75.2,
   },
   {
     type: 'social-video',
     amount: 168.78,
-    percentage: 19.9,
+    percentage: 18.7,
+  },
+  {
+    type: 'other',
+    amount: 55.12,
+    percentage: 6.1,
   },
 ];
 
@@ -226,8 +239,9 @@ export const mockPayoutHistory: Payout[] = [
     periodStart: '2025-07-01',
     periodEnd: '2025-09-30',
     earningTypeBreakdown: [
-      { type: 'streaming', amount: 1031.56, percentage: 80.0 },
-      { type: 'social-video', amount: 257.89, percentage: 20.0 },
+      { type: 'streaming', amount: 1031.56, percentage: 75.5 },
+      { type: 'social-video', amount: 257.89, percentage: 18.9 },
+      { type: 'other', amount: 76.45, percentage: 5.6 },
     ],
     platformBreakdown: [
       { platform: 'spotify', amount: 534.23, streams: 178945 },
@@ -237,6 +251,11 @@ export const mockPayoutHistory: Payout[] = [
       { platform: 'amazon', amount: 98.67, streams: 32456 },
       { platform: 'youtube-music', amount: 67.89, streams: 22789 },
       { platform: 'instagram', amount: 30.09, views: 234567 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 801.57, percentage: 62.2 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 389.56, percentage: 30.2 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 98.32, percentage: 7.6 },
     ],
     releaseBreakdown: [
       {
@@ -319,8 +338,9 @@ export const mockPayoutHistory: Payout[] = [
     periodStart: '2025-04-01',
     periodEnd: '2025-06-30',
     earningTypeBreakdown: [
-      { type: 'streaming', amount: 765.42, percentage: 80.0 },
-      { type: 'social-video', amount: 191.36, percentage: 20.0 },
+      { type: 'streaming', amount: 765.42, percentage: 76.2 },
+      { type: 'social-video', amount: 191.36, percentage: 19.1 },
+      { type: 'other', amount: 47.18, percentage: 4.7 },
     ],
     platformBreakdown: [
       { platform: 'spotify', amount: 401.34, streams: 134567 },
@@ -329,6 +349,10 @@ export const mockPayoutHistory: Payout[] = [
       { platform: 'youtube-content-id', amount: 89.12, views: 456789 },
       { platform: 'amazon', amount: 67.89, streams: 22345 },
       { platform: 'youtube-music', amount: 40.42, streams: 13567 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 600, percentage: 65 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 324.26, percentage: 35 },
     ],
     releaseBreakdown: [],
   },
@@ -344,6 +368,7 @@ export function getEarningTypeLabel(type: EarningType): string {
   const labels: Record<EarningType, string> = {
     streaming: 'Streaming & Downloads',
     'social-video': 'Social Video',
+    other: 'Other',
   };
   return labels[type];
 }
@@ -388,7 +413,50 @@ export interface EarningsTimeSeriesData {
   date: string;
   streaming: number;
   socialVideo: number;
+  other?: number;
 }
+
+// Earnings data by timeframe for KPI filtering
+export interface TimeframeEarnings {
+  totalEarnings: number;
+  streaming: { amount: number; percentage: number };
+  socialVideo: { amount: number; percentage: number };
+  other: { amount: number; percentage: number };
+  currentBalance: number;
+}
+
+export type TimeFrame = 'monthly' | 'quarterly' | 'yearly' | 'lifetime';
+
+export const mockEarningsByTimeframe: Record<TimeFrame, TimeframeEarnings> = {
+  monthly: {
+    totalEarnings: 902.35,
+    streaming: { amount: 678.45, percentage: 75.2 },
+    socialVideo: { amount: 168.78, percentage: 18.7 },
+    other: { amount: 55.12, percentage: 6.1 },
+    currentBalance: 8.47,
+  },
+  quarterly: {
+    totalEarnings: 2847.92,
+    streaming: { amount: 2135.94, percentage: 75.0 },
+    socialVideo: { amount: 540.71, percentage: 19.0 },
+    other: { amount: 171.27, percentage: 6.0 },
+    currentBalance: 8.47,
+  },
+  yearly: {
+    totalEarnings: 9234.56,
+    streaming: { amount: 6925.92, percentage: 75.0 },
+    socialVideo: { amount: 1754.57, percentage: 19.0 },
+    other: { amount: 554.07, percentage: 6.0 },
+    currentBalance: 8.47,
+  },
+  lifetime: {
+    totalEarnings: 12456.89,
+    streaming: { amount: 9342.67, percentage: 75.0 },
+    socialVideo: { amount: 2366.81, percentage: 19.0 },
+    other: { amount: 747.41, percentage: 6.0 },
+    currentBalance: 8.47,
+  },
+};
 
 // Mock time series data (last 7 days) - smoother progression
 export const mockEarningsTimeSeries: EarningsTimeSeriesData[] = [
