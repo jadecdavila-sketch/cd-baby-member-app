@@ -11,6 +11,7 @@ interface EarningsChartData {
   date: string;
   streaming: number;
   socialVideo: number;
+  other?: number;
 }
 
 interface EarningsChartProps {
@@ -65,6 +66,9 @@ export function EarningsChart({
       if (selectedType === 'all' || selectedType === 'social-video') {
         values.push(item.socialVideo);
       }
+      if (selectedType === 'all' || selectedType === 'other') {
+        values.push(item.other ?? 0);
+      }
       return values;
     });
 
@@ -95,7 +99,8 @@ export function EarningsChart({
   };
 
   const getXPosition = (index: number) => {
-    return padding.left + index * (chartWidth / (formattedData.length - 1));
+    const divisor = formattedData.length > 1 ? formattedData.length - 1 : 1;
+    return padding.left + index * (chartWidth / divisor);
   };
 
   const streamingPath = formattedData
@@ -112,6 +117,13 @@ export function EarningsChart({
     )
     .join(' ');
 
+  const otherPath = formattedData
+    .map(
+      (item, i) =>
+        `${i === 0 ? 'M' : 'L'}${getXPosition(i)},${getYPosition(item.other ?? 0)}`
+    )
+    .join(' ');
+
   // Create area fill paths (line + bottom edge)
   const streamingAreaPath =
     streamingPath +
@@ -120,6 +132,13 @@ export function EarningsChart({
   const socialVideoAreaPath =
     socialVideoPath +
     ` L${getXPosition(formattedData.length - 1)},${padding.top + chartHeight} L${padding.left},${padding.top + chartHeight} Z`;
+
+  const otherAreaPath =
+    otherPath +
+    ` L${getXPosition(formattedData.length - 1)},${padding.top + chartHeight} L${padding.left},${padding.top + chartHeight} Z`;
+
+  // Color for "other" type
+  const otherColor = '#9ca3af'; // gray-400
 
   // Calculate percentage change for tooltip
   const getPercentageChange = (index: number, type: 'streaming' | 'socialVideo') => {
@@ -155,6 +174,10 @@ export function EarningsChart({
           <linearGradient id="socialVideoGradient" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor={COLORS.secondary} stopOpacity="0.3" />
             <stop offset="100%" stopColor={COLORS.secondary} stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="otherGradient" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor={otherColor} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={otherColor} stopOpacity="0" />
           </linearGradient>
         </defs>
 
@@ -223,6 +246,17 @@ export function EarningsChart({
           />
         )}
 
+        {/* Other area fill */}
+        {(selectedType === 'all' || selectedType === 'other') && (
+          <path
+            d={otherAreaPath}
+            fill="url(#otherGradient)"
+            style={{
+              animation: 'fadeIn 0.8s ease-out',
+            }}
+          />
+        )}
+
         {/* Streaming line */}
         {(selectedType === 'all' || selectedType === 'streaming') && (
           <path
@@ -246,6 +280,23 @@ export function EarningsChart({
             d={socialVideoPath}
             fill="none"
             stroke={COLORS.secondary}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              strokeDasharray: '1000',
+              strokeDashoffset: '1000',
+              animation: 'drawLine 1.5s ease-out forwards',
+            }}
+          />
+        )}
+
+        {/* Other line */}
+        {(selectedType === 'all' || selectedType === 'other') && (
+          <path
+            d={otherPath}
+            fill="none"
+            stroke={otherColor}
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -323,6 +374,38 @@ export function EarningsChart({
                 />
               </>
             )}
+
+            {/* Visible data point - Other */}
+            {(selectedType === 'all' || selectedType === 'other') && (
+              <>
+                {/* Invisible larger hit area for better hover */}
+                <circle
+                  cx={getXPosition(i)}
+                  cy={getYPosition(item.other ?? 0)}
+                  r="12"
+                  fill="transparent"
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                />
+                {/* Visible dot */}
+                <circle
+                  cx={getXPosition(i)}
+                  cy={getYPosition(item.other ?? 0)}
+                  r={hoveredIndex === i ? '5' : '3'}
+                  fill={otherColor}
+                  stroke={COLORS.bgDark}
+                  strokeWidth="2"
+                  style={{
+                    transition: 'r 0.2s ease',
+                    cursor: 'pointer',
+                    opacity: hoveredIndex === i ? 1 : 0.8,
+                  }}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                />
+              </>
+            )}
           </g>
         ))}
       </svg>
@@ -378,7 +461,7 @@ export function EarningsChart({
           )}
 
           {(selectedType === 'all' || selectedType === 'social-video') && (
-            <div>
+            <div className="mb-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs" style={{ color: COLORS.secondary }}>
                   Social Video
@@ -409,6 +492,19 @@ export function EarningsChart({
             </div>
           )}
 
+          {(selectedType === 'all' || selectedType === 'other') && (
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs" style={{ color: otherColor }}>
+                  Other
+                </span>
+                <span className="font-bold" style={{ color: otherColor }}>
+                  {formatCurrency(formattedData[hoveredIndex].other ?? 0)}
+                </span>
+              </div>
+            </div>
+          )}
+
           {selectedType === 'all' && (
             <div className="mt-2 border-t border-gray-600 pt-2">
               <div className="flex items-center justify-between">
@@ -416,7 +512,8 @@ export function EarningsChart({
                 <span className="font-bold text-white">
                   {formatCurrency(
                     formattedData[hoveredIndex].streaming +
-                      formattedData[hoveredIndex].socialVideo
+                      formattedData[hoveredIndex].socialVideo +
+                      (formattedData[hoveredIndex].other ?? 0)
                   )}
                 </span>
               </div>

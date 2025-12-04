@@ -459,15 +459,25 @@ export const mockEarningsByTimeframe: Record<TimeFrame, TimeframeEarnings> = {
 };
 
 // Mock time series data (last 7 days) - smoother progression
-export const mockEarningsTimeSeries: EarningsTimeSeriesData[] = [
-  { date: '2025-10-28', streaming: 22.15, socialVideo: 5.5 },
-  { date: '2025-10-29', streaming: 23.4, socialVideo: 5.75 },
-  { date: '2025-10-30', streaming: 24.2, socialVideo: 6.1 },
-  { date: '2025-10-31', streaming: 25.8, socialVideo: 6.4 },
-  { date: '2025-11-01', streaming: 26.5, socialVideo: 6.65 },
-  { date: '2025-11-02', streaming: 27.2, socialVideo: 6.9 },
-  { date: '2025-11-03', streaming: 28.1, socialVideo: 7.15 },
-];
+// Using relative dates to ensure data is always recent
+const getRecentDates = () => {
+  const dates: EarningsTimeSeriesData[] = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    dates.push({
+      date: dateStr,
+      streaming: 22.15 + (6 - i) * 1.0,
+      socialVideo: 5.5 + (6 - i) * 0.27,
+      other: 1.5 + (6 - i) * 0.15,
+    });
+  }
+  return dates;
+};
+
+export const mockEarningsTimeSeries: EarningsTimeSeriesData[] = getRecentDates();
 
 // Mock releases for filtering
 export const mockEarningsReleases: Release[] = [

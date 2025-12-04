@@ -282,31 +282,74 @@ export default function EarningsPage() {
             </Link>
           </div>
 
-          {/* Hero Section - Current Balance */}
-          <Card className="border-0">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-base">CURRENT BALANCE</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <div
-                  className="text-6xl font-bold"
-                  style={{ color: COLORS.primary }}
-                >
-                  {formatCurrency(mockEarningsBalance.currentBalance)}
+          {/* Current Balance & Last Payout Cards */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Current Balance */}
+            <Card className="border-0">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base">CURRENT BALANCE</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <div
+                    className="text-5xl font-bold"
+                    style={{ color: COLORS.primary }}
+                  >
+                    {formatCurrency(mockEarningsBalance.currentBalance)}
+                  </div>
                 </div>
-              </div>
 
-              {/* Pay Point Progress */}
-              <PayPointProgress
-                balance={{
-                  ...mockEarningsBalance,
-                  payoutThreshold,
-                }}
-                onThresholdChange={handleThresholdChange}
-              />
-            </CardContent>
-          </Card>
+                {/* Pay Point Progress */}
+                <PayPointProgress
+                  balance={{
+                    ...mockEarningsBalance,
+                    payoutThreshold,
+                  }}
+                  onThresholdChange={handleThresholdChange}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Last Payout */}
+            <Card className="border-0">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base">LAST PAYOUT</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {mockEarningsBalance.lastPayoutAmount > 0 && mockEarningsBalance.lastPayoutDate ? (
+                  <>
+                    <div>
+                      <div
+                        className="text-5xl font-bold"
+                        style={{ color: COLORS.textWhite }}
+                      >
+                        {formatCurrency(mockEarningsBalance.lastPayoutAmount)}
+                      </div>
+                      <p className="text-muted-foreground text-sm mt-2">
+                        {new Date(mockEarningsBalance.lastPayoutDate).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <Link
+                      href="/earnings/history"
+                      className="inline-flex items-center gap-2 rounded-[3px] border px-4 py-2 text-sm font-medium transition-colors hover:bg-white/5"
+                      style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                    >
+                      View payout history
+                      <ExternalLink className="h-4 w-4" />
+                    </Link>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    No payouts yet
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Chart */}
           <Card className="border-0">
@@ -314,7 +357,7 @@ export default function EarningsPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <CardTitle className="text-base">EARNINGS TRENDS</CardTitle>
                 <div className="border-border inline-flex flex-shrink-0 overflow-hidden rounded-lg border">
-                  {(['all', 'streaming', 'social-video'] as const).map(
+                  {(['all', 'streaming', 'social-video', 'other'] as const).map(
                     (type) => (
                       <button
                         key={type}
@@ -323,9 +366,7 @@ export default function EarningsPage() {
                         style={{
                           backgroundColor:
                             selectedEarningType === type
-                              ? type === 'social-video'
-                                ? COLORS.secondary
-                                : COLORS.primary
+                              ? COLORS.primary
                               : 'transparent',
                           color:
                             selectedEarningType === type
@@ -337,7 +378,9 @@ export default function EarningsPage() {
                           ? 'All Types'
                           : type === 'streaming'
                             ? 'Streaming'
-                            : 'Social Video'}
+                            : type === 'social-video'
+                              ? 'Social Video'
+                              : 'Other'}
                       </button>
                     )
                   )}
