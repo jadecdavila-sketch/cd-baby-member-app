@@ -460,13 +460,13 @@ export const mockEarningsByTimeframe: Record<TimeFrame, TimeframeEarnings> = {
 
 // Mock time series data (last 7 days) - smoother progression
 // Using relative dates to ensure data is always recent
-const getRecentDates = () => {
+const getRecentDates = (): EarningsTimeSeriesData[] => {
   const dates: EarningsTimeSeriesData[] = [];
   const today = new Date();
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split('T')[0] ?? '';
     dates.push({
       date: dateStr,
       streaming: 22.15 + (6 - i) * 1.0,

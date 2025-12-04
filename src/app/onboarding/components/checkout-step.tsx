@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Disc3, Music, Sparkles } from 'lucide-react';
-import { FaApple, FaGoogle, FaPaypal } from 'react-icons/fa';
+import { Apple, CreditCard, Disc3, Music, Smartphone, Sparkles, Wallet } from 'lucide-react';
 
 import { COLORS } from '@/shared/constants/theme';
 
@@ -218,7 +217,7 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
                 color: paymentMethod === 'paypal' ? COLORS.textWhite : COLORS.textGray,
               }}
             >
-              <FaPaypal className="h-6 w-6" />
+              <Wallet className="h-6 w-6" />
               <span className="text-xs font-medium">PayPal</span>
             </button>
 
@@ -232,7 +231,7 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
                 color: paymentMethod === 'apple' ? COLORS.textWhite : COLORS.textGray,
               }}
             >
-              <FaApple className="h-6 w-6" />
+              <Apple className="h-6 w-6" />
               <span className="text-xs font-medium">Apple Pay</span>
             </button>
 
@@ -246,7 +245,7 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
                 color: paymentMethod === 'google' ? COLORS.textWhite : COLORS.textGray,
               }}
             >
-              <FaGoogle className="h-6 w-6" />
+              <Smartphone className="h-6 w-6" />
               <span className="text-xs font-medium">Google Pay</span>
             </button>
           </div>
