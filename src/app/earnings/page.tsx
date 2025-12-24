@@ -370,7 +370,7 @@ export default function EarningsPage() {
                       className="inline-flex items-center gap-2 rounded-[3px] border px-4 py-2 text-sm font-medium transition-colors hover:bg-white/5"
                       style={{ borderColor: COLORS.primary, color: COLORS.primary }}
                     >
-                      View payout history
+                      View earnings history
                       <ExternalLink className="h-4 w-4" />
                     </Link>
                   </>
