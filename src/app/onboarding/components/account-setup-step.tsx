@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   DollarSign,
   FileText,
+  Plus,
   Shield,
   Sparkles,
   Wallet,
@@ -63,6 +64,7 @@ const MILESTONES: Milestone[] = [
 export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProps) {
   const [completedMilestones, setCompletedMilestones] = useState<Set<SetupTask>>(new Set());
   const [justCompletedMilestone, setJustCompletedMilestone] = useState<SetupTask | null>(null);
+  const [expandedMilestone, setExpandedMilestone] = useState<SetupTask | null>(null);
 
   // Payout form state
   const [payoutMethod, setPayoutMethod] = useState<'bank' | 'paypal' | null>(null);
@@ -95,7 +97,6 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
     }
     const nextIncomplete = MILESTONES.find((m) => !completedMilestones.has(m.id));
     if (nextIncomplete) return nextIncomplete;
-    // Default to first milestone (MILESTONES is a non-empty constant array)
     return MILESTONES[0] as Milestone;
   };
 
@@ -104,6 +105,7 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
 
   const handleMilestoneComplete = (milestoneId: SetupTask) => {
     setJustCompletedMilestone(milestoneId);
+    setExpandedMilestone(null);
 
     setTimeout(() => {
       const newCompleted = new Set(completedMilestones);
@@ -239,6 +241,32 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
     </div>
   );
 
+  const renderPayoutEmptyState = () => (
+    <div className="mt-4 flex flex-col items-center text-center py-6">
+      <div
+        className="mb-4 flex h-12 w-12 items-center justify-center rounded-full"
+        style={{ backgroundColor: COLORS.bgCard }}
+      >
+        <Wallet className="h-6 w-6" style={{ color: COLORS.textGray }} />
+      </div>
+      <p className="text-sm font-medium" style={{ color: COLORS.textWhite }}>
+        You do not currently have a payout method setup.
+      </p>
+      <p className="mt-1 text-sm" style={{ color: COLORS.textGray }}>
+        Add a payout method to receive payouts.
+      </p>
+      <button
+        type="button"
+        onClick={() => setExpandedMilestone('payout')}
+        className="mt-4 flex items-center gap-2 rounded-[3px] px-6 py-2.5 text-sm font-medium text-white transition-all hover:opacity-90"
+        style={{ backgroundColor: COLORS.primary }}
+      >
+        <Plus className="h-4 w-4" />
+        Add Payout Method
+      </button>
+    </div>
+  );
+
   const renderTaxForm = () => (
     <div className="mt-4 space-y-4 rounded-lg p-4" style={{ backgroundColor: `${COLORS.primary}10` }}>
       {/* Tax Form Type Selection */}
@@ -339,6 +367,40 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
       </button>
     </div>
   );
+
+  const renderTaxEmptyState = () => {
+    const hasPayoutMethod = completedMilestones.has('payout');
+
+    return (
+      <div className="mt-4 flex flex-col items-center text-center py-6">
+        <div
+          className="mb-4 flex h-12 w-12 items-center justify-center rounded-full"
+          style={{ backgroundColor: COLORS.bgCard }}
+        >
+          <FileText className="h-6 w-6" style={{ color: hasPayoutMethod ? COLORS.textGray : COLORS.textGray }} />
+        </div>
+        <p className="text-sm font-medium" style={{ color: COLORS.textWhite }}>
+          You have not completed a tax form.
+        </p>
+        <p className="mt-1 text-sm" style={{ color: COLORS.textGray }}>
+          {hasPayoutMethod
+            ? 'Complete your tax information to receive payments.'
+            : 'Please setup a payout method before submitting a tax form.'}
+        </p>
+        {hasPayoutMethod && (
+          <button
+            type="button"
+            onClick={() => setExpandedMilestone('tax')}
+            className="mt-4 flex items-center gap-2 rounded-[3px] px-6 py-2.5 text-sm font-medium text-white transition-all hover:opacity-90"
+            style={{ backgroundColor: COLORS.primary }}
+          >
+            <Plus className="h-4 w-4" />
+            Add Tax Form
+          </button>
+        )}
+      </div>
+    );
+  };
 
   const renderIdentityForm = () => (
     <div className="mt-4 space-y-4 rounded-lg p-4" style={{ backgroundColor: `${COLORS.primary}10` }}>
@@ -502,6 +564,8 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
                     const isCompleted = completedMilestones.has(milestone.id);
                     const isCurrentMilestone = currentMilestone?.id === milestone.id;
                     const isJustCompleted = justCompletedMilestone === milestone.id;
+                    const isExpanded = expandedMilestone === milestone.id;
+                    const canExpand = isCurrentMilestone && !isCompleted;
 
                     return (
                       <div key={milestone.id} className="relative">
@@ -600,14 +664,14 @@ export function AccountSetupStep({ firstName, onComplete }: AccountSetupStepProp
                               {milestone.description}
                             </p>
 
-                            {/* Show form for current milestone */}
-                            {isCurrentMilestone && !isCompleted && (
-                              <>
-                                {milestone.id === 'payout' && renderPayoutForm()}
-                                {milestone.id === 'tax' && renderTaxForm()}
-                                {milestone.id === 'identity' && renderIdentityForm()}
-                              </>
-                            )}
+                            {/* Show empty state or form for current milestone */}
+                            {canExpand && !isExpanded && milestone.id === 'payout' && renderPayoutEmptyState()}
+                            {canExpand && isExpanded && milestone.id === 'payout' && renderPayoutForm()}
+
+                            {canExpand && !isExpanded && milestone.id === 'tax' && renderTaxEmptyState()}
+                            {canExpand && isExpanded && milestone.id === 'tax' && renderTaxForm()}
+
+                            {canExpand && milestone.id === 'identity' && renderIdentityForm()}
 
                             {/* Celebration message */}
                             {isJustCompleted && (

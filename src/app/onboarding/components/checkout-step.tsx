@@ -1,282 +1,132 @@
 'use client';
 
 import { useState } from 'react';
-import { Apple, CreditCard, Disc3, Music, Smartphone, Sparkles, Wallet } from 'lucide-react';
+import { ChevronDown, CreditCard, Lock } from 'lucide-react';
 
 import { COLORS } from '@/shared/constants/theme';
 
 interface CheckoutStepProps {
-  releaseType: 'album' | 'single';
+  releaseType: 'album' | 'single' | 'bundle';
   onSubmit: () => void;
 }
 
 export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple' | 'google' | 'paypal' | null>(null);
+  const [expandedSection, setExpandedSection] = useState<'cards' | 'paypal' | null>('cards');
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
+  const [securityCode, setSecurityCode] = useState('');
   const [nameOnCard, setNameOnCard] = useState('');
-  const [rememberCard, setRememberCard] = useState(false);
-  const [country, setCountry] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [showDiscountInput, setShowDiscountInput] = useState(false);
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountApplied, setDiscountApplied] = useState(false);
 
-  const basePrice = releaseType === 'album' ? 29.99 : 9.99;
-  const discount = discountApplied ? basePrice * 0.1 : 0;
-  const total = basePrice - discount;
+  const basePrice = releaseType === 'bundle' ? 19.99 : releaseType === 'album' ? 14.99 : 9.99;
 
   const isCardValid =
-    cardNumber.length >= 16 &&
+    cardNumber.replace(/\s/g, '').length >= 15 &&
     expiryDate.length >= 5 &&
-    cvv.length >= 3 &&
-    nameOnCard.trim() &&
-    country.trim() &&
-    streetAddress.trim() &&
-    city.trim() &&
-    zipCode.trim();
-
-  const isValid =
-    paymentMethod === 'apple' ||
-    paymentMethod === 'google' ||
-    paymentMethod === 'paypal' ||
-    (paymentMethod === 'card' && isCardValid);
+    securityCode.length >= 3 &&
+    nameOnCard.trim();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isValid) {
+    if (isCardValid) {
       onSubmit();
     }
   };
 
-  const handleApplyDiscount = () => {
-    if (discountCode.trim()) {
-      setDiscountApplied(true);
-    }
+  const handleApplePay = () => {
+    // Simulate Apple Pay - in production would trigger Apple Pay flow
+    onSubmit();
+  };
+
+  const handleGooglePay = () => {
+    // Simulate Google Pay - in production would trigger Google Pay flow
+    onSubmit();
+  };
+
+  const handlePayPal = () => {
+    // Simulate PayPal - in production would redirect to PayPal
+    onSubmit();
+  };
+
+  const formatCardNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 16);
+    const groups = digits.match(/.{1,4}/g);
+    return groups ? groups.join(' ') : digits;
   };
 
   return (
-    <>
-      <div className="text-center">
-        <h1
-          className="text-3xl font-bold font-[var(--font-test-national-2-narrow)] uppercase tracking-wide"
-          style={{ color: COLORS.textWhite }}
+    <div className="space-y-6">
+      {/* Header */}
+      <p
+        className="text-xs font-medium uppercase tracking-wider"
+        style={{ color: COLORS.textGray }}
+      >
+        Select your payment method
+      </p>
+
+      {/* Apple Pay & Google Pay Buttons */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={handleApplePay}
+          className="flex items-center justify-center gap-2 rounded-[3px] py-4 font-medium transition-all hover:opacity-90"
+          style={{ backgroundColor: '#000000', color: '#ffffff' }}
         >
-          Complete Your Purchase
-        </h1>
-        <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>
-          {releaseType === 'album' ? 'Album' : 'Single'} Distribution
-        </p>
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+          </svg>
+          <span>Pay</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleGooglePay}
+          className="flex items-center justify-center gap-2 rounded-[3px] py-4 font-medium transition-all hover:opacity-90"
+          style={{ backgroundColor: '#000000', color: '#ffffff' }}
+        >
+          <span>Buy with</span>
+          <svg viewBox="0 0 24 24" className="h-5 w-5">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>Pay</span>
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Order Summary - Hero Card */}
-        <div
-          className="relative overflow-hidden rounded-[3px] p-6"
-          style={{
-            background: `linear-gradient(135deg, ${COLORS.primary}20 0%, ${COLORS.bgCard} 50%, #ff386a20 100%)`,
-            border: `1px solid ${COLORS.primary}40`,
-          }}
+      {/* More payment options */}
+      <p
+        className="text-sm font-medium"
+        style={{ color: COLORS.textWhite }}
+      >
+        More payment options
+      </p>
+
+      {/* Cards Section */}
+      <div
+        className="rounded-lg overflow-hidden"
+        style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.borderGray}` }}
+      >
+        <button
+          type="button"
+          onClick={() => setExpandedSection(expandedSection === 'cards' ? null : 'cards')}
+          className="w-full flex items-center justify-between p-4"
         >
-          {/* Decorative elements */}
-          <div
-            className="absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-20"
-            style={{ backgroundColor: COLORS.primary }}
+          <div className="flex items-center gap-3">
+            <CreditCard className="h-5 w-5" style={{ color: COLORS.textGray }} />
+            <span className="font-medium" style={{ color: COLORS.textWhite }}>Cards</span>
+          </div>
+          <ChevronDown
+            className={`h-5 w-5 transition-transform ${expandedSection === 'cards' ? 'rotate-180' : ''}`}
+            style={{ color: COLORS.textGray }}
           />
-          <div
-            className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full opacity-10"
-            style={{ backgroundColor: '#ff386a' }}
-          />
+        </button>
 
-          {/* Content */}
-          <div className="relative">
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: `${COLORS.primary}30` }}
-              >
-                {releaseType === 'album' ? (
-                  <Disc3 className="h-6 w-6" style={{ color: COLORS.primary }} />
-                ) : (
-                  <Music className="h-6 w-6" style={{ color: COLORS.primary }} />
-                )}
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider" style={{ color: COLORS.textGray }}>
-                  {releaseType === 'album' ? 'Album' : 'Single'} Distribution
-                </p>
-                <p className="text-sm" style={{ color: COLORS.textWhite }}>
-                  Worldwide release to 150+ platforms
-                </p>
-              </div>
-            </div>
-
-            {/* Price Display */}
-            <div className="flex items-end justify-between">
-              <div>
-                {discountApplied && (
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles className="h-3 w-3" style={{ color: COLORS.success }} />
-                    <span className="text-xs" style={{ color: COLORS.success }}>
-                      10% discount applied!
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-baseline gap-2">
-                  <span
-                    className="text-4xl font-bold font-[var(--font-test-national-2-narrow)]"
-                    style={{ color: COLORS.textWhite }}
-                  >
-                    ${total.toFixed(2)}
-                  </span>
-                  {discountApplied && (
-                    <span
-                      className="text-lg line-through"
-                      style={{ color: COLORS.textGray }}
-                    >
-                      ${basePrice.toFixed(2)}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs mt-1" style={{ color: COLORS.textGray }}>
-                  One-time payment
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Discount Code */}
-        {!showDiscountInput ? (
-          <button
-            type="button"
-            onClick={() => setShowDiscountInput(true)}
-            className="text-sm underline"
-            style={{ color: COLORS.primary }}
-          >
-            Have a discount code?
-          </button>
-        ) : (
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={discountCode}
-              onChange={(e) => setDiscountCode(e.target.value)}
-              className="flex-1 rounded-[3px] border px-4 py-2 text-sm focus:outline-none"
-              style={{
-                backgroundColor: COLORS.bgInput,
-                borderColor: COLORS.borderGray,
-                color: COLORS.textWhite,
-              }}
-              placeholder="Enter discount code"
-              disabled={discountApplied}
-            />
-            <button
-              type="button"
-              onClick={handleApplyDiscount}
-              disabled={discountApplied || !discountCode.trim()}
-              className="rounded-[3px] px-4 py-2 text-sm font-medium disabled:opacity-50"
-              style={{ backgroundColor: COLORS.primary, color: COLORS.textWhite }}
-            >
-              {discountApplied ? 'Applied' : 'Apply'}
-            </button>
-          </div>
-        )}
-
-        {/* Payment Method Selection */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium" style={{ color: COLORS.textWhite }}>
-            Payment Method
-          </label>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => setPaymentMethod('card')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-3 transition-all"
-              style={{
-                backgroundColor: paymentMethod === 'card' ? COLORS.primary : 'transparent',
-                borderColor: paymentMethod === 'card' ? COLORS.primary : COLORS.borderGray,
-                color: paymentMethod === 'card' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <CreditCard className="h-6 w-6" />
-              <span className="text-xs font-medium">Card</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPaymentMethod('paypal')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-3 transition-all"
-              style={{
-                backgroundColor: paymentMethod === 'paypal' ? COLORS.primary : 'transparent',
-                borderColor: paymentMethod === 'paypal' ? COLORS.primary : COLORS.borderGray,
-                color: paymentMethod === 'paypal' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Wallet className="h-6 w-6" />
-              <span className="text-xs font-medium">PayPal</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPaymentMethod('apple')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-3 transition-all"
-              style={{
-                backgroundColor: paymentMethod === 'apple' ? COLORS.primary : 'transparent',
-                borderColor: paymentMethod === 'apple' ? COLORS.primary : COLORS.borderGray,
-                color: paymentMethod === 'apple' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Apple className="h-6 w-6" />
-              <span className="text-xs font-medium">Apple Pay</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPaymentMethod('google')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-3 transition-all"
-              style={{
-                backgroundColor: paymentMethod === 'google' ? COLORS.primary : 'transparent',
-                borderColor: paymentMethod === 'google' ? COLORS.primary : COLORS.borderGray,
-                color: paymentMethod === 'google' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Smartphone className="h-6 w-6" />
-              <span className="text-xs font-medium">Google Pay</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Card Details (only shown if card is selected) */}
-        {paymentMethod === 'card' && (
-          <div className="space-y-4">
-            {/* Name on Card */}
-            <div>
-              <label
-                htmlFor="nameOnCard"
-                className="block text-sm font-medium mb-2"
-                style={{ color: COLORS.textWhite }}
-              >
-                Name on Card
-              </label>
-              <input
-                type="text"
-                id="nameOnCard"
-                value={nameOnCard}
-                onChange={(e) => setNameOnCard(e.target.value)}
-                className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                style={{
-                  backgroundColor: COLORS.bgInput,
-                  borderColor: COLORS.borderGray,
-                  color: COLORS.textWhite,
-                }}
-                placeholder="John Doe"
-              />
-            </div>
+        {expandedSection === 'cards' && (
+          <form onSubmit={handleSubmit} className="px-4 pb-4 space-y-4">
+            <p className="text-xs" style={{ color: COLORS.textGray }}>
+              All fields are required unless marked otherwise.
+            </p>
 
             {/* Card Number */}
             <div>
@@ -285,24 +135,71 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
                 className="block text-sm font-medium mb-2"
                 style={{ color: COLORS.textWhite }}
               >
-                Card Number
+                Card number
               </label>
-              <input
-                type="text"
-                id="cardNumber"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
-                className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                style={{
-                  backgroundColor: COLORS.bgInput,
-                  borderColor: COLORS.borderGray,
-                  color: COLORS.textWhite,
-                }}
-                placeholder="1234 5678 9012 3456"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="cardNumber"
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                  className="w-full rounded-[3px] border px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2"
+                  style={{
+                    backgroundColor: COLORS.bgInput,
+                    borderColor: COLORS.borderGray,
+                    color: COLORS.textWhite,
+                  }}
+                  placeholder=""
+                />
+                <CreditCard
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5"
+                  style={{ color: COLORS.textGray }}
+                />
+              </div>
+              {/* Card Icons */}
+              <div className="flex items-center gap-1 mt-2">
+                {/* Amex */}
+                <div className="w-8 h-5 rounded bg-[#006FCF] flex items-center justify-center">
+                  <span className="text-white text-[8px] font-bold">AMEX</span>
+                </div>
+                {/* UnionPay */}
+                <div className="w-8 h-5 rounded bg-[#1A1F71] flex items-center justify-center">
+                  <span className="text-white text-[6px] font-bold">UnionPay</span>
+                </div>
+                {/* Diners */}
+                <div className="w-8 h-5 rounded bg-white flex items-center justify-center border">
+                  <span className="text-[#004A97] text-[6px] font-bold">DINERS</span>
+                </div>
+                {/* Discover */}
+                <div className="w-8 h-5 rounded bg-[#FF6600] flex items-center justify-center">
+                  <span className="text-white text-[5px] font-bold">DISCOVER</span>
+                </div>
+                {/* JCB */}
+                <div className="w-8 h-5 rounded bg-gradient-to-r from-[#0B4EA2] to-[#098D4A] flex items-center justify-center">
+                  <span className="text-white text-[7px] font-bold">JCB</span>
+                </div>
+                {/* Maestro */}
+                <div className="w-8 h-5 rounded bg-white flex items-center justify-center border overflow-hidden">
+                  <div className="flex">
+                    <div className="w-3 h-3 rounded-full bg-[#0066B2]" />
+                    <div className="w-3 h-3 rounded-full bg-[#CC0000] -ml-1" />
+                  </div>
+                </div>
+                {/* Mastercard */}
+                <div className="w-8 h-5 rounded bg-white flex items-center justify-center border overflow-hidden">
+                  <div className="flex">
+                    <div className="w-3 h-3 rounded-full bg-[#EB001B]" />
+                    <div className="w-3 h-3 rounded-full bg-[#F79E1B] -ml-1" />
+                  </div>
+                </div>
+                {/* Visa */}
+                <div className="w-8 h-5 rounded bg-white flex items-center justify-center border">
+                  <span className="text-[#1A1F71] text-[8px] font-bold italic">VISA</span>
+                </div>
+              </div>
             </div>
 
-            {/* Expiry and CVV */}
+            {/* Expiry and Security Code */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label
@@ -310,199 +207,130 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
                   className="block text-sm font-medium mb-2"
                   style={{ color: COLORS.textWhite }}
                 >
-                  Expiry Date
+                  Expiry date
                 </label>
-                <input
-                  type="text"
-                  id="expiryDate"
-                  value={expiryDate}
-                  onChange={(e) => {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 2) {
-                      value = value.slice(0, 2) + '/' + value.slice(2, 4);
-                    }
-                    setExpiryDate(value);
-                  }}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: COLORS.textWhite,
-                  }}
-                  placeholder="MM/YY"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="expiryDate"
+                    value={expiryDate}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, '');
+                      if (value.length >= 2) {
+                        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                      }
+                      setExpiryDate(value);
+                    }}
+                    className="w-full rounded-[3px] border px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2"
+                    style={{
+                      backgroundColor: COLORS.bgInput,
+                      borderColor: COLORS.borderGray,
+                      color: COLORS.textWhite,
+                    }}
+                    placeholder=""
+                    maxLength={5}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-5 h-3 rounded-sm border border-gray-400 flex items-center">
+                      <div className="w-1 h-1 rounded-full bg-red-400 ml-auto mr-0.5" />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs mt-1" style={{ color: COLORS.textGray }}>
+                  Front of card in MM/YY format
+                </p>
               </div>
 
               <div>
                 <label
-                  htmlFor="cvv"
+                  htmlFor="securityCode"
                   className="block text-sm font-medium mb-2"
                   style={{ color: COLORS.textWhite }}
                 >
-                  CVV
+                  Security code
                 </label>
-                <input
-                  type="text"
-                  id="cvv"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: COLORS.textWhite,
-                  }}
-                  placeholder="123"
-                />
-              </div>
-            </div>
-
-            {/* Billing Address Section */}
-            <div className="pt-4 border-t" style={{ borderColor: COLORS.borderGray }}>
-              <p className="text-sm font-medium mb-4" style={{ color: COLORS.textWhite }}>
-                Billing Address
-              </p>
-
-              {/* Country */}
-              <div className="mb-4">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: COLORS.textWhite }}
-                >
-                  Country
-                </label>
-                <select
-                  id="country"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: country ? COLORS.textWhite : COLORS.textGray,
-                  }}
-                >
-                  <option value="">Select country</option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="GB">United Kingdom</option>
-                  <option value="AU">Australia</option>
-                  <option value="DE">Germany</option>
-                  <option value="FR">France</option>
-                  <option value="ES">Spain</option>
-                  <option value="IT">Italy</option>
-                  <option value="NL">Netherlands</option>
-                  <option value="BR">Brazil</option>
-                  <option value="MX">Mexico</option>
-                  <option value="JP">Japan</option>
-                  <option value="OTHER">Other</option>
-                </select>
-              </div>
-
-              {/* Street Address */}
-              <div className="mb-4">
-                <label
-                  htmlFor="streetAddress"
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: COLORS.textWhite }}
-                >
-                  Street Address
-                </label>
-                <input
-                  type="text"
-                  id="streetAddress"
-                  value={streetAddress}
-                  onChange={(e) => setStreetAddress(e.target.value)}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: COLORS.textWhite,
-                  }}
-                  placeholder="123 Main St"
-                />
-              </div>
-
-              {/* City and Zip */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: COLORS.textWhite }}
-                  >
-                    City
-                  </label>
+                <div className="relative">
                   <input
                     type="text"
-                    id="city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
+                    id="securityCode"
+                    value={securityCode}
+                    onChange={(e) => setSecurityCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    className="w-full rounded-[3px] border px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2"
                     style={{
                       backgroundColor: COLORS.bgInput,
                       borderColor: COLORS.borderGray,
                       color: COLORS.textWhite,
                     }}
-                    placeholder="New York"
+                    placeholder=""
+                    maxLength={4}
                   />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-5 h-3 rounded-sm border border-gray-400 flex items-center justify-end">
+                      <div className="w-1 h-1 rounded-full bg-red-400 mr-0.5" />
+                    </div>
+                  </div>
                 </div>
-
-                <div>
-                  <label
-                    htmlFor="zipCode"
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: COLORS.textWhite }}
-                  >
-                    ZIP / Postal Code
-                  </label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                    className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                    style={{
-                      backgroundColor: COLORS.bgInput,
-                      borderColor: COLORS.borderGray,
-                      color: COLORS.textWhite,
-                    }}
-                    placeholder="10001"
-                  />
-                </div>
+                <p className="text-xs mt-1" style={{ color: COLORS.textGray }}>
+                  3 digits on back of card
+                </p>
               </div>
             </div>
 
-            {/* Remember Card Checkbox */}
-            <label className="flex items-center gap-3 cursor-pointer pt-2">
+            {/* Name on Card */}
+            <div>
+              <label
+                htmlFor="nameOnCard"
+                className="block text-sm font-medium mb-2"
+                style={{ color: COLORS.textWhite }}
+              >
+                Name on card
+              </label>
               <input
-                type="checkbox"
-                checked={rememberCard}
-                onChange={(e) => setRememberCard(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-600 bg-transparent"
-                style={{ accentColor: COLORS.primary }}
+                type="text"
+                id="nameOnCard"
+                value={nameOnCard}
+                onChange={(e) => setNameOnCard(e.target.value)}
+                className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: COLORS.bgInput,
+                  borderColor: COLORS.borderGray,
+                  color: COLORS.textWhite,
+                }}
+                placeholder=""
               />
-              <span className="text-sm" style={{ color: COLORS.textGray }}>
-                Save this card for future purchases
-              </span>
-            </label>
-          </div>
-        )}
+            </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={!isValid}
-          className="w-full rounded-[3px] py-3 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
-          style={{
-            backgroundColor: isValid ? COLORS.primary : COLORS.bgCard,
-            color: COLORS.textWhite,
-          }}
-        >
-          Confirm Purchase - ${total.toFixed(2)}
-        </button>
-      </form>
-    </>
+            {/* Pay Button */}
+            <button
+              type="submit"
+              disabled={!isCardValid}
+              className="w-full flex items-center justify-center gap-2 rounded-[3px] py-4 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
+              style={{
+                backgroundColor: isCardValid ? '#1a365d' : '#2d3748',
+                color: '#ffffff',
+              }}
+            >
+              <Lock className="h-4 w-4" />
+              <span>Pay ${basePrice.toFixed(2)}</span>
+            </button>
+          </form>
+        )}
+      </div>
+
+      {/* PayPal Button */}
+      <button
+        type="button"
+        onClick={handlePayPal}
+        className="w-full flex items-center justify-center gap-2 rounded-[3px] py-4 font-medium transition-all hover:opacity-90"
+        style={{ backgroundColor: '#000000', color: '#ffffff' }}
+      >
+        {/* PayPal Icon */}
+        <svg viewBox="0 0 24 24" className="h-5 w-5">
+          <path fill="#00457C" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.2c-.535 0-.98.38-1.063.9l-.907 5.75a.642.642 0 0 1-.634.536l-.52-.18z"/>
+          <path fill="#0079C1" d="M23.048 7.667c-.028.179-.06.362-.096.55-1.237 6.351-5.469 8.545-10.874 8.545H9.326c-.661 0-1.218.48-1.321 1.132l-1.425 9.05a.535.535 0 0 0 .528.619h3.707c.576 0 1.066-.42 1.155-.99l.048-.248.914-5.8.059-.32c.089-.57.579-.99 1.155-.99h.728c4.715 0 8.405-1.915 9.485-7.454.45-2.315.217-4.248-.975-5.606a4.645 4.645 0 0 0-1.336-.938"/>
+        </svg>
+        <span>PayPal</span>
+      </button>
+    </div>
   );
 }

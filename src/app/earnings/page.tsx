@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Info } from 'lucide-react';
 
 import {
   Card,
@@ -187,7 +187,15 @@ export default function EarningsPage() {
             <Link href="/earnings/history">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">TOTAL EARNINGS</CardTitle>
+                  <CardTitle className="text-sm flex items-center gap-1.5">
+                    TOTAL EARNINGS
+                    <div className="relative group">
+                      <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-48 p-2 text-xs font-normal normal-case rounded-md bg-gray-800 text-gray-200 shadow-lg">
+                        Combined revenue from all sources including streaming, social video, and other earnings.
+                      </div>
+                    </div>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
@@ -213,7 +221,15 @@ export default function EarningsPage() {
             <Link href="/earnings/streaming">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">STREAMING</CardTitle>
+                  <CardTitle className="text-sm flex items-center gap-1.5">
+                    STREAMING
+                    <div className="relative group">
+                      <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-48 p-2 text-xs font-normal normal-case rounded-md bg-gray-800 text-gray-200 shadow-lg">
+                        Revenue from audio streaming platforms like Spotify, Apple Music, and Amazon Music.
+                      </div>
+                    </div>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
@@ -237,7 +253,15 @@ export default function EarningsPage() {
             <Link href="/earnings/social-video">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">SOCIAL VIDEO</CardTitle>
+                  <CardTitle className="text-sm flex items-center gap-1.5">
+                    SOCIAL VIDEO
+                    <div className="relative group">
+                      <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-48 p-2 text-xs font-normal normal-case rounded-md bg-gray-800 text-gray-200 shadow-lg">
+                        Revenue from video platforms like YouTube, TikTok, and Instagram when your music is used.
+                      </div>
+                    </div>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
@@ -261,7 +285,15 @@ export default function EarningsPage() {
             <Link href="/earnings/other">
               <Card className="border-0 transition-all hover:border-gray-600">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">OTHER</CardTitle>
+                  <CardTitle className="text-sm flex items-center gap-1.5">
+                    OTHER
+                    <div className="relative group">
+                      <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-48 p-2 text-xs font-normal normal-case rounded-md bg-gray-800 text-gray-200 shadow-lg">
+                        Additional revenue sources including sync licensing, downloads, and miscellaneous earnings.
+                      </div>
+                    </div>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-2xl font-bold">
@@ -283,9 +315,9 @@ export default function EarningsPage() {
           </div>
 
           {/* Current Balance & Last Payout Cards */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-4">
             {/* Current Balance */}
-            <Card className="border-0">
+            <Card className="border-0 md:col-span-3">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base">CURRENT BALANCE</CardTitle>
               </CardHeader>

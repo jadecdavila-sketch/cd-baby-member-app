@@ -9,7 +9,7 @@ import { COLORS } from '@/shared/constants/theme';
 
 interface ConfirmationStepProps {
   firstName: string;
-  releaseType: 'album' | 'single';
+  releaseType: 'album' | 'single' | 'bundle';
   orderId: string;
   total: number;
   onGoToAccountSetup: () => void;
@@ -101,7 +101,8 @@ export function ConfirmationStep({
       </div>
 
       <p className="text-sm" style={{ color: COLORS.textGray }}>
-        A confirmation email has been sent to your registered email address.
+        A confirmation email has been sent to{' '}
+        <span style={{ color: COLORS.textWhite }}>{firstName.toLowerCase()}@email.com</span>
       </p>
 
       <button

@@ -3,15 +3,47 @@ export type EarningType = 'streaming' | 'social-video' | 'other';
 export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 export type DSP =
-  | 'spotify'
+  | '7digital'
+  | 'amazon'
+  | 'ami'
+  | 'anghami'
   | 'apple-music'
-  | 'tiktok'
-  | 'youtube-music'
-  | 'youtube-content-id'
-  | 'youtube-shorts'
-  | 'instagram'
+  | 'audible-magic'
+  | 'awa'
+  | 'bmat'
+  | 'boomplay'
+  | 'deezer'
   | 'facebook'
-  | 'amazon';
+  | 'fuga'
+  | 'hungama'
+  | 'iheartradio'
+  | 'imusica'
+  | 'inprodicon'
+  | 'instagram'
+  | 'jaxsta'
+  | 'kdigital'
+  | 'kkbox'
+  | 'kuack'
+  | 'lissen'
+  | 'netease'
+  | 'nuuday'
+  | 'pandora'
+  | 'peloton'
+  | 'qobuz'
+  | 'saavn'
+  | 'slacker-radio'
+  | 'soundexchange'
+  | 'spotify'
+  | 'synchtank'
+  | 'tencent'
+  | 'the-mlc'
+  | 'tidal'
+  | 'tiktok'
+  | 'trebel'
+  | 'tuned-global'
+  | 'youtube-content-id'
+  | 'youtube-music'
+  | 'youtube-shorts';
 
 export interface EarningsBalance {
   currentBalance: number;
@@ -356,6 +388,186 @@ export const mockPayoutHistory: Payout[] = [
     ],
     releaseBreakdown: [],
   },
+  {
+    id: 'payout-003',
+    payoutDate: '2025-04-01',
+    status: 'completed',
+    grossAmount: 1123.45,
+    fees: 33.7,
+    taxWithholding: 4.49,
+    netAmount: 1085.26,
+    periodStart: '2025-01-01',
+    periodEnd: '2025-03-31',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 898.76, percentage: 78.1 },
+      { type: 'social-video', amount: 202.34, percentage: 17.6 },
+      { type: 'other', amount: 49.45, percentage: 4.3 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 478.56, streams: 159876 },
+      { platform: 'apple-music', amount: 289.34, streams: 96789 },
+      { platform: 'tiktok', amount: 145.67, views: 1156789 },
+      { platform: 'youtube-content-id', amount: 98.23, views: 623456 },
+      { platform: 'amazon', amount: 78.45, streams: 25890 },
+      { platform: 'deezer', amount: 33.2, streams: 11234 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 695.47, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 325.67, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 64.12, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
+  {
+    id: 'payout-004',
+    payoutDate: '2025-01-02',
+    status: 'completed',
+    grossAmount: 876.32,
+    fees: 26.29,
+    taxWithholding: 3.51,
+    netAmount: 846.52,
+    periodStart: '2024-10-01',
+    periodEnd: '2024-12-31',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 701.06, percentage: 80.0 },
+      { type: 'social-video', amount: 157.54, percentage: 18.0 },
+      { type: 'other', amount: 17.52, percentage: 2.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 367.45, streams: 122567 },
+      { platform: 'apple-music', amount: 223.12, streams: 74567 },
+      { platform: 'tiktok', amount: 112.34, views: 892345 },
+      { platform: 'youtube-content-id', amount: 78.9, views: 498765 },
+      { platform: 'amazon', amount: 56.78, streams: 18923 },
+      { platform: 'pandora', amount: 37.73, streams: 12567 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 542.86, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 253.95, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 49.71, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
+  {
+    id: 'payout-005',
+    payoutDate: '2024-10-01',
+    status: 'completed',
+    grossAmount: 734.89,
+    fees: 22.05,
+    taxWithholding: 2.94,
+    netAmount: 709.9,
+    periodStart: '2024-07-01',
+    periodEnd: '2024-09-30',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 587.91, percentage: 80.0 },
+      { type: 'social-video', amount: 132.28, percentage: 18.0 },
+      { type: 'other', amount: 14.7, percentage: 2.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 312.56, streams: 104234 },
+      { platform: 'apple-music', amount: 178.45, streams: 59567 },
+      { platform: 'tiktok', amount: 98.67, views: 783456 },
+      { platform: 'youtube-content-id', amount: 67.34, views: 423456 },
+      { platform: 'amazon', amount: 45.67, streams: 15234 },
+      { platform: 'tidal', amount: 32.2, streams: 10789 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 454.94, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 212.97, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 41.99, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
+  {
+    id: 'payout-006',
+    payoutDate: '2024-07-01',
+    status: 'completed',
+    grossAmount: 612.34,
+    fees: 18.37,
+    taxWithholding: 2.45,
+    netAmount: 591.52,
+    periodStart: '2024-04-01',
+    periodEnd: '2024-06-30',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 489.87, percentage: 80.0 },
+      { type: 'social-video', amount: 110.22, percentage: 18.0 },
+      { type: 'other', amount: 12.25, percentage: 2.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 256.78, streams: 85678 },
+      { platform: 'apple-music', amount: 145.67, streams: 48678 },
+      { platform: 'tiktok', amount: 89.45, views: 712345 },
+      { platform: 'youtube-content-id', amount: 56.78, views: 356789 },
+      { platform: 'amazon', amount: 38.45, streams: 12834 },
+      { platform: 'youtube-music', amount: 25.21, streams: 8456 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 379.18, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 177.46, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 34.88, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
+  {
+    id: 'payout-007',
+    payoutDate: '2024-04-01',
+    status: 'completed',
+    grossAmount: 523.67,
+    fees: 15.71,
+    taxWithholding: 2.09,
+    netAmount: 505.87,
+    periodStart: '2024-01-01',
+    periodEnd: '2024-03-31',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 418.94, percentage: 80.0 },
+      { type: 'social-video', amount: 94.26, percentage: 18.0 },
+      { type: 'other', amount: 10.47, percentage: 2.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 218.45, streams: 72890 },
+      { platform: 'apple-music', amount: 123.56, streams: 41234 },
+      { platform: 'tiktok', amount: 78.34, views: 623456 },
+      { platform: 'youtube-content-id', amount: 48.9, views: 312345 },
+      { platform: 'amazon', amount: 32.12, streams: 10723 },
+      { platform: 'soundexchange', amount: 22.3, streams: 7456 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 324.26, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 151.76, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 29.85, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
+  {
+    id: 'payout-008',
+    payoutDate: '2024-01-02',
+    status: 'completed',
+    grossAmount: 445.23,
+    fees: 13.36,
+    taxWithholding: 1.78,
+    netAmount: 430.09,
+    periodStart: '2023-10-01',
+    periodEnd: '2023-12-31',
+    earningTypeBreakdown: [
+      { type: 'streaming', amount: 356.18, percentage: 80.0 },
+      { type: 'social-video', amount: 80.14, percentage: 18.0 },
+      { type: 'other', amount: 8.91, percentage: 2.0 },
+    ],
+    platformBreakdown: [
+      { platform: 'spotify', amount: 189.34, streams: 63178 },
+      { platform: 'apple-music', amount: 107.45, streams: 35890 },
+      { platform: 'tiktok', amount: 67.89, views: 542345 },
+      { platform: 'youtube-content-id', amount: 42.34, views: 267890 },
+      { platform: 'amazon', amount: 27.56, streams: 9189 },
+      { platform: 'deezer', amount: 10.65, streams: 3567 },
+    ],
+    artistBreakdown: [
+      { artistId: 'artist-1', artistName: 'Jade Davis', amount: 275.68, percentage: 64.1 },
+      { artistId: 'artist-2', artistName: 'Luna Wave', amount: 129.03, percentage: 30 },
+      { artistId: 'artist-3', artistName: 'The Midnight Owls', amount: 25.38, percentage: 5.9 },
+    ],
+    releaseBreakdown: [],
+  },
 ];
 
 // Helper function to format currency
@@ -376,15 +588,47 @@ export function getEarningTypeLabel(type: EarningType): string {
 // Helper function to get platform display name
 export function getPlatformName(platform: DSP): string {
   const names: Record<DSP, string> = {
-    spotify: 'Spotify',
-    'apple-music': 'Apple Music',
-    tiktok: 'TikTok',
-    'youtube-music': 'YouTube Music',
-    'youtube-content-id': 'YouTube Content ID',
-    'youtube-shorts': 'YouTube Shorts',
-    instagram: 'Instagram',
-    facebook: 'Facebook',
+    '7digital': '7digital',
     amazon: 'Amazon Music',
+    ami: 'AMI',
+    anghami: 'Anghami',
+    'apple-music': 'Apple iTunes',
+    'audible-magic': 'Audible Magic',
+    awa: 'AWA',
+    bmat: 'BMAT',
+    boomplay: 'Boomplay',
+    deezer: 'Deezer',
+    facebook: 'Facebook',
+    fuga: 'FUGA',
+    hungama: 'Hungama',
+    iheartradio: 'iHeartRadio',
+    imusica: 'iMusica',
+    inprodicon: 'InProdicon',
+    instagram: 'Instagram',
+    jaxsta: 'Jaxsta',
+    kdigital: 'KDigital',
+    kkbox: 'KKBox',
+    kuack: 'Kuack',
+    lissen: 'Lissen',
+    netease: 'NetEase Cloud Music',
+    nuuday: 'Nuuday',
+    pandora: 'Pandora',
+    peloton: 'Peloton',
+    qobuz: 'Qobuz',
+    saavn: 'Saavn',
+    'slacker-radio': 'Slacker Radio',
+    soundexchange: 'SoundExchange',
+    spotify: 'Spotify',
+    synchtank: 'Synchtank',
+    tencent: 'Tencent Music Entertainment (TME)',
+    'the-mlc': 'The MLC',
+    tidal: 'Tidal',
+    tiktok: 'TikTok',
+    trebel: 'Trebel',
+    'tuned-global': 'Tuned Global',
+    'youtube-content-id': 'Youtube Content ID',
+    'youtube-music': 'YouTube Music',
+    'youtube-shorts': 'YouTube Shorts',
   };
   return names[platform];
 }

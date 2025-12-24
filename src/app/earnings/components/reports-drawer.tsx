@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, ChevronDown, Music, Video, Receipt, Banknote, FileText } from 'lucide-react';
+import { Download, ChevronDown, Music, Receipt, Banknote, FileText } from 'lucide-react';
 
 import {
   Sheet,
@@ -25,8 +25,7 @@ interface ReportsDrawerProps {
 }
 
 type ReportType =
-  | 'digital-distribution'
-  | 'svm'
+  | 'earnings'
   | 'account-transactions'
   | 'payout-statement'
   | 'publishing-quarterly';
@@ -45,27 +44,18 @@ interface ReportConfig {
 
 const reportConfigs: ReportConfig[] = [
   {
-    id: 'digital-distribution',
-    name: 'Digital Distribution Earnings',
-    description: 'Streaming revenue by platform and track',
+    id: 'earnings',
+    name: 'Earnings Report',
+    description: 'Streaming & social video revenue by platform and track',
     icon: Music,
     color: COLORS.primary,
     formats: ['PDF', 'Excel'],
     timeframeOptions: ['monthly', 'yearly', 'lifetime'],
   },
   {
-    id: 'svm',
-    name: 'Social Video Monetization (SVM)',
-    description: 'TikTok, Instagram, YouTube Shorts, and Facebook revenue',
-    icon: Video,
-    color: COLORS.secondary,
-    formats: ['PDF', 'Excel'],
-    timeframeOptions: ['monthly', 'yearly', 'lifetime'],
-  },
-  {
     id: 'account-transactions',
     name: 'Account Transactions',
-    description: 'Complete ledger of all deposits and payouts',
+    description: 'Complete ledger of all deposits, fees, and payouts.',
     icon: Receipt,
     color: COLORS.success,
     formats: ['PDF', 'CSV'],
@@ -118,8 +108,7 @@ export function ReportsDrawer({ open, onOpenChange }: ReportsDrawerProps) {
       payout?: string;
     }>
   >({
-    'digital-distribution': { type: 'monthly', month: 'November', year: String(currentYear) },
-    'svm': { type: 'monthly', month: 'November', year: String(currentYear) },
+    'earnings': { type: 'monthly', month: 'November', year: String(currentYear) },
     'account-transactions': { type: 'monthly', month: 'November', year: String(currentYear) },
     'payout-statement': { type: 'specific-payout', payout: 'payout-1' },
     'publishing-quarterly': { type: 'quarterly', quarter: 'Q4', year: String(currentYear) },

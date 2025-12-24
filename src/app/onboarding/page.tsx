@@ -19,7 +19,7 @@ export default function OnboardingPage() {
   // Info step state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [releaseType, setReleaseType] = useState<'album' | 'single' | 'not-ready' | null>(null);
+  const [releaseType, setReleaseType] = useState<'album' | 'single' | 'bundle' | 'not-ready' | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Order state
@@ -28,7 +28,7 @@ export default function OnboardingPage() {
       `CDB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
   );
 
-  const basePrice = releaseType === 'album' ? 29.99 : 9.99;
+  const basePrice = releaseType === 'bundle' ? 19.99 : releaseType === 'album' ? 14.99 : 9.99;
 
   // Account setup step has its own full-width layout
   if (step === 'account-setup') {

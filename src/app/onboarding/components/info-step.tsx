@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, Disc3, MapPin, Music } from 'lucide-react';
+import { Clock, Disc3, Info, MapPin, Music, Package } from 'lucide-react';
 
 import { COLORS } from '@/shared/constants/theme';
 
@@ -10,8 +10,8 @@ interface InfoStepProps {
   setFirstName: (value: string) => void;
   lastName: string;
   setLastName: (value: string) => void;
-  releaseType: 'album' | 'single' | 'not-ready' | null;
-  setReleaseType: (value: 'album' | 'single' | 'not-ready') => void;
+  releaseType: 'album' | 'single' | 'bundle' | 'not-ready' | null;
+  setReleaseType: (value: 'album' | 'single' | 'bundle' | 'not-ready') => void;
   agreedToTerms: boolean;
   setAgreedToTerms: (value: boolean) => void;
   onSubmit: () => void;
@@ -99,7 +99,6 @@ export function InfoStep({
 }: InfoStepProps) {
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
-  const [zipCode, setZipCode] = useState('');
   const [isDetecting, setIsDetecting] = useState(true);
 
   // Auto-detect location on mount
@@ -119,9 +118,6 @@ export function InfoStep({
           setState(data.region_code);
         }
 
-        if (data.postal) {
-          setZipCode(data.postal);
-        }
       } catch {
         // Silently fail - user can enter manually
         setCountry('US');
@@ -259,107 +255,85 @@ export function InfoStep({
             </select>
           </div>
 
-          {/* State (US only) and ZIP in a row */}
-          <div className="grid grid-cols-2 gap-4">
-            {country === 'US' ? (
-              <div>
-                <label
-                  htmlFor="state"
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: COLORS.textWhite }}
-                >
-                  State
-                </label>
-                <select
-                  id="state"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: state ? COLORS.textWhite : COLORS.textGray,
-                  }}
-                >
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => (
-                    <option key={s.code} value={s.code}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div>
-                <label
-                  htmlFor="region"
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: COLORS.textWhite }}
-                >
-                  State / Region
-                </label>
-                <input
-                  type="text"
-                  id="region"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: COLORS.bgInput,
-                    borderColor: COLORS.borderGray,
-                    color: COLORS.textWhite,
-                  }}
-                  placeholder="Enter state or region"
-                />
-              </div>
-            )}
-
+          {/* State (US only) */}
+          {country === 'US' ? (
             <div>
               <label
-                htmlFor="zipCode"
+                htmlFor="state"
                 className="block text-sm font-medium mb-2"
                 style={{ color: COLORS.textWhite }}
               >
-                {country === 'US' ? 'ZIP Code' : 'Postal Code'}
+                State
+              </label>
+              <select
+                id="state"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: COLORS.bgInput,
+                  borderColor: COLORS.borderGray,
+                  color: state ? COLORS.textWhite : COLORS.textGray,
+                }}
+              >
+                <option value="">Select state</option>
+                {US_STATES.map((s) => (
+                  <option key={s.code} value={s.code}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div>
+              <label
+                htmlFor="region"
+                className="block text-sm font-medium mb-2"
+                style={{ color: COLORS.textWhite }}
+              >
+                State / Region
               </label>
               <input
                 type="text"
-                id="zipCode"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                id="region"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
                 className="w-full rounded-[3px] border px-4 py-3 text-sm focus:outline-none"
                 style={{
                   backgroundColor: COLORS.bgInput,
                   borderColor: COLORS.borderGray,
                   color: COLORS.textWhite,
                 }}
-                placeholder={country === 'US' ? '10001' : 'Enter postal code'}
+                placeholder="Enter state or region"
               />
             </div>
-          </div>
+          )}
         </div>
 
         {/* Release Type Section */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium" style={{ color: COLORS.textWhite }}>
-            Choose release type
-          </label>
+          <div className="flex items-center gap-2">
+            <label className="block text-sm font-medium" style={{ color: COLORS.textWhite }}>
+              Choose release type
+            </label>
+            <div className="group relative">
+              <Info className="h-4 w-4 cursor-help" style={{ color: COLORS.textGray }} />
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                <div
+                  className="rounded-md px-3 py-2 text-xs whitespace-nowrap shadow-lg"
+                  style={{ backgroundColor: COLORS.bgCard, color: COLORS.textWhite }}
+                >
+                  Single is 1 track. Album is 2+ tracks.
+                </div>
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent"
+                  style={{ borderTopColor: COLORS.bgCard }}
+                />
+              </div>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => setReleaseType('album')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
-              style={{
-                backgroundColor: releaseType === 'album' ? COLORS.primary : 'transparent',
-                borderColor: releaseType === 'album' ? COLORS.primary : COLORS.borderGray,
-                color: releaseType === 'album' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Disc3 className="h-8 w-8" />
-              <span className="text-sm font-medium">Album</span>
-            </button>
-
+          <div className="grid grid-cols-3 gap-3">
             <button
               type="button"
               onClick={() => setReleaseType('single')}
@@ -372,6 +346,37 @@ export function InfoStep({
             >
               <Music className="h-8 w-8" />
               <span className="text-sm font-medium">Single</span>
+              <span className="text-xs font-semibold">$9.99</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setReleaseType('album')}
+              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
+              style={{
+                backgroundColor: releaseType === 'album' ? COLORS.primary : 'transparent',
+                borderColor: releaseType === 'album' ? COLORS.primary : COLORS.borderGray,
+                color: releaseType === 'album' ? COLORS.textWhite : COLORS.textGray,
+              }}
+            >
+              <Disc3 className="h-8 w-8" />
+              <span className="text-sm font-medium">Album</span>
+              <span className="text-xs font-semibold">$14.99</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setReleaseType('bundle')}
+              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
+              style={{
+                backgroundColor: releaseType === 'bundle' ? COLORS.primary : 'transparent',
+                borderColor: releaseType === 'bundle' ? COLORS.primary : COLORS.borderGray,
+                color: releaseType === 'bundle' ? COLORS.textWhite : COLORS.textGray,
+              }}
+            >
+              <Package className="h-8 w-8" />
+              <span className="text-sm font-medium">Bundle</span>
+              <span className="text-xs font-semibold">$19.99</span>
             </button>
           </div>
 
