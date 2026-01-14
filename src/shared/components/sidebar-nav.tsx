@@ -9,7 +9,7 @@ import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { getAssetPath } from '@/shared/utils/asset-path';
 
 const navItems = [
-  { href: '/', icon: '1-home.svg', label: 'Home' },
+  { href: '/home', icon: '1-home.svg', label: 'Home' },
   { href: '/releases', icon: '2-releases.svg', label: 'Releases' },
   { href: '/analytics', icon: '3-analytics.svg', label: 'Analytics' },
   { href: '/earnings', icon: '4-earnings.svg', label: 'Earnings' },
@@ -20,8 +20,8 @@ export function SidebarNav() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/';
+    if (href === '/home') {
+      return pathname === '/home';
     }
     return pathname.startsWith(href);
   };

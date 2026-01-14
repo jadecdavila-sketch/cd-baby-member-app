@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, Disc3, Info, MapPin, Music, Package } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { MapPin } from 'lucide-react';
 
 import { COLORS } from '@/shared/constants/theme';
 
@@ -10,11 +11,9 @@ interface InfoStepProps {
   setFirstName: (value: string) => void;
   lastName: string;
   setLastName: (value: string) => void;
-  releaseType: 'album' | 'single' | 'bundle' | 'not-ready' | null;
-  setReleaseType: (value: 'album' | 'single' | 'bundle' | 'not-ready') => void;
   agreedToTerms: boolean;
   setAgreedToTerms: (value: boolean) => void;
-  onSubmit: () => void;
+  onGoToDashboard: () => void;
 }
 
 const COUNTRIES = [
@@ -91,12 +90,11 @@ export function InfoStep({
   setFirstName,
   lastName,
   setLastName,
-  releaseType,
-  setReleaseType,
   agreedToTerms,
   setAgreedToTerms,
-  onSubmit,
+  onGoToDashboard,
 }: InfoStepProps) {
+  const router = useRouter();
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
   const [isDetecting, setIsDetecting] = useState(true);
@@ -129,12 +127,20 @@ export function InfoStep({
     detectLocation();
   }, []);
 
-  const isValid = firstName.trim() && lastName.trim() && releaseType && agreedToTerms && country;
+  // Basic validation for name, terms, and country
+  const isBasicValid = firstName.trim() && lastName.trim() && agreedToTerms && country;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isValid) {
-      onSubmit();
+  const handleStartRelease = () => {
+    if (isBasicValid) {
+      router.push(
+        `/onboarding/release-type?firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+      );
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    if (isBasicValid) {
+      onGoToDashboard();
     }
   };
 
@@ -152,7 +158,7 @@ export function InfoStep({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         {/* Full Name Section */}
         <div className="space-y-4">
           <div>
@@ -310,91 +316,6 @@ export function InfoStep({
           )}
         </div>
 
-        {/* Release Type Section */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <label className="block text-sm font-medium" style={{ color: COLORS.textWhite }}>
-              Choose release type
-            </label>
-            <div className="group relative">
-              <Info className="h-4 w-4 cursor-help" style={{ color: COLORS.textGray }} />
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                <div
-                  className="rounded-md px-3 py-2 text-xs whitespace-nowrap shadow-lg"
-                  style={{ backgroundColor: COLORS.bgCard, color: COLORS.textWhite }}
-                >
-                  Single is 1 track. Album is 2+ tracks.
-                </div>
-                <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent"
-                  style={{ borderTopColor: COLORS.bgCard }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              type="button"
-              onClick={() => setReleaseType('single')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
-              style={{
-                backgroundColor: releaseType === 'single' ? COLORS.primary : 'transparent',
-                borderColor: releaseType === 'single' ? COLORS.primary : COLORS.borderGray,
-                color: releaseType === 'single' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Music className="h-8 w-8" />
-              <span className="text-sm font-medium">Single</span>
-              <span className="text-xs font-semibold">$9.99</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setReleaseType('album')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
-              style={{
-                backgroundColor: releaseType === 'album' ? COLORS.primary : 'transparent',
-                borderColor: releaseType === 'album' ? COLORS.primary : COLORS.borderGray,
-                color: releaseType === 'album' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Disc3 className="h-8 w-8" />
-              <span className="text-sm font-medium">Album</span>
-              <span className="text-xs font-semibold">$14.99</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setReleaseType('bundle')}
-              className="flex flex-col items-center gap-2 rounded-[3px] border p-4 transition-all"
-              style={{
-                backgroundColor: releaseType === 'bundle' ? COLORS.primary : 'transparent',
-                borderColor: releaseType === 'bundle' ? COLORS.primary : COLORS.borderGray,
-                color: releaseType === 'bundle' ? COLORS.textWhite : COLORS.textGray,
-              }}
-            >
-              <Package className="h-8 w-8" />
-              <span className="text-sm font-medium">Bundle</span>
-              <span className="text-xs font-semibold">$19.99</span>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setReleaseType('not-ready')}
-            className="w-full flex items-center justify-center gap-2 rounded-[3px] border p-3 transition-all"
-            style={{
-              backgroundColor: releaseType === 'not-ready' ? COLORS.primary : 'transparent',
-              borderColor: releaseType === 'not-ready' ? COLORS.primary : COLORS.borderGray,
-              color: releaseType === 'not-ready' ? COLORS.textWhite : COLORS.textGray,
-            }}
-          >
-            <Clock className="h-5 w-5" />
-            <span className="text-sm font-medium">I&apos;m not ready to release yet</span>
-          </button>
-        </div>
-
         {/* Terms of Service Section */}
         <div className="space-y-3">
           <label className="flex items-start gap-3 cursor-pointer">
@@ -423,19 +344,36 @@ export function InfoStep({
           </label>
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={!isValid}
-          className="w-full rounded-[3px] py-3 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
-          style={{
-            backgroundColor: isValid ? COLORS.primary : COLORS.bgCard,
-            color: COLORS.textWhite,
-          }}
-        >
-          Continue
-        </button>
-      </form>
+        {/* CTA Buttons */}
+        <div className="space-y-3">
+          {/* Primary CTA - Start a Release */}
+          <button
+            type="button"
+            id="start-release-button"
+            onClick={handleStartRelease}
+            disabled={!isBasicValid}
+            className="w-full rounded-[3px] py-3 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
+            style={{
+              backgroundColor: isBasicValid ? COLORS.primary : COLORS.bgCard,
+              color: COLORS.textWhite,
+            }}
+          >
+            Start a Release
+          </button>
+
+          {/* Secondary CTA - Go to Dashboard */}
+          <button
+            type="button"
+            id="go-to-dashboard-button"
+            onClick={handleGoToDashboard}
+            disabled={!isBasicValid}
+            className="w-full text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ color: isBasicValid ? COLORS.primary : COLORS.textGray }}
+          >
+            Go to my Dashboard
+          </button>
+        </div>
+      </div>
     </>
   );
 }
