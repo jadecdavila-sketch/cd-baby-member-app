@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Disc3, Music, Package } from 'lucide-react';
+import { ArrowLeft, Disc3, Music } from 'lucide-react';
 
 import { Header } from '@/modules/header/header';
 import { COLORS } from '@/shared/constants/theme';
@@ -26,15 +26,6 @@ const RELEASE_TYPES = [
     description:
       'Release a collection of songs as a cohesive project. Albums allow you to tell a bigger story and give fans more music to enjoy in one package.',
   },
-  {
-    id: 'bundle',
-    icon: Package,
-    title: 'Bundle',
-    subtitle: 'Multiple releases at a discount',
-    price: '$19.99',
-    description:
-      'Plan ahead and save money by purchasing multiple release credits upfront. Ideal for artists who release music frequently throughout the year.',
-  },
 ];
 
 function ReleaseTypeContent() {
@@ -47,7 +38,7 @@ function ReleaseTypeContent() {
   const handleContinue = () => {
     if (selectedType) {
       router.push(
-        `/onboarding/checkout?releaseType=${selectedType}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+        `/onboarding/boost?releaseType=${selectedType}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
       );
     }
   };
