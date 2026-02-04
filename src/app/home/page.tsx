@@ -13,15 +13,17 @@ import {
   DollarSign,
   Disc3,
   Music,
-  Play,
   Plus,
-  TrendingUp,
   User,
   Wallet,
 } from 'lucide-react';
 
 import { COLORS } from '@/shared/constants/theme';
 import { getAssetPath } from '@/shared/utils/asset-path';
+import { JourneyBanner } from '@/shared/components/journey-banner';
+import { KPICards } from '@/app/analytics/components/kpi-cards';
+import { MetricsChart } from '@/app/analytics/components/metrics-chart';
+import { mockKPIs, mockTimeSeriesData } from '@/app/analytics/mock-data';
 
 // Dashboard states based on PRD
 type DashboardState = 'brand-new' | 'has-draft' | 'in-review' | 'delivered';
@@ -54,7 +56,7 @@ const MOCK_RELEASES: Record<DashboardState, Release[]> = {
       title: 'Summer Vibes',
       artist: 'Your Artist Name',
       type: 'single',
-      status: 'draft',
+      status: 'needs-attention',
       coverArt: '/assets/covers/cover1.jpg',
       updatedAt: '2 hours ago',
     },
@@ -92,7 +94,7 @@ const MOCK_RELEASES: Record<DashboardState, Release[]> = {
       title: 'City Lights',
       artist: 'Your Artist Name',
       type: 'single',
-      status: 'sent-for-review',
+      status: 'draft',
       coverArt: '/assets/covers/cover1.jpg',
       updatedAt: '3 days ago',
     },
@@ -101,7 +103,7 @@ const MOCK_RELEASES: Record<DashboardState, Release[]> = {
       title: 'Neon Glow EP',
       artist: 'Your Artist Name',
       type: 'album',
-      status: 'sent-for-review',
+      status: 'draft',
       coverArt: '/assets/covers/cover4.jpg',
       updatedAt: '5 days ago',
     },
@@ -135,14 +137,6 @@ const MOCK_RELEASES: Record<DashboardState, Release[]> = {
       updatedAt: '2 months ago',
     },
   ],
-};
-
-// Mock analytics data for delivered state
-const MOCK_ANALYTICS = {
-  totalStreams: 12847,
-  monthlyListeners: 3241,
-  saves: 892,
-  playlistAdds: 47,
 };
 
 // Mock earnings data
@@ -583,13 +577,14 @@ export default function HomePage() {
   const showReleaseCatalog = dashboardState !== 'brand-new';
   const showAnalytics = dashboardState === 'delivered';
   const showBalance = dashboardState === 'delivered';
+  const showAnalyticsPlaceholder = dashboardState === 'in-review';
 
   // Release catalog component
   const renderReleaseCatalog = () => {
     if (!showReleaseCatalog) return null;
 
-    const displayedReleases = releasesExpanded ? releases : releases.slice(0, 1);
-    const hiddenCount = releases.length - 1;
+    const displayedReleases = releasesExpanded ? releases : releases.slice(0, 3);
+    const hiddenCount = releases.length - 3;
 
     return (
       <div
@@ -616,24 +611,24 @@ export default function HomePage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {displayedReleases.map((release) => (
               <div
                 key={release.id}
-                className="flex items-center gap-4 p-4 rounded-[3px] transition-colors hover:opacity-90"
+                className="rounded-[3px] overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg"
                 style={{
                   backgroundColor: COLORS.bgDark,
-                  border: release.status === 'needs-attention' ? `2px solid ${COLORS.warning}` : 'none',
+                  border: release.status === 'needs-attention' ? `2px solid ${COLORS.warning}` : `1px solid ${COLORS.borderGray}`,
                 }}
               >
-                {/* Cover Art */}
-                <div className="w-14 h-14 rounded-[3px] overflow-hidden flex-shrink-0 relative">
+                {/* Cover Art - Large and Prominent */}
+                <div className="relative aspect-square w-full overflow-hidden">
                   {release.coverArt ? (
                     <Image
                       src={getAssetPath(release.coverArt)}
                       alt={release.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform hover:scale-105"
                     />
                   ) : (
                     <div
@@ -641,92 +636,102 @@ export default function HomePage() {
                       style={{ backgroundColor: `${COLORS.primary}20` }}
                     >
                       {release.type === 'album' ? (
-                        <Disc3 className="h-6 w-6" style={{ color: COLORS.primary }} />
+                        <Disc3 className="h-16 w-16" style={{ color: COLORS.primary }} />
                       ) : (
-                        <Music className="h-6 w-6" style={{ color: COLORS.primary }} />
+                        <Music className="h-16 w-16" style={{ color: COLORS.primary }} />
                       )}
                     </div>
                   )}
+                  {/* Status Badge Overlay */}
+                  <div className="absolute top-3 right-3">
+                    {release.status === 'draft' && (
+                      <span
+                        className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.7)', color: COLORS.textGray }}
+                      >
+                        <Clock className="h-3 w-3" />
+                        Draft
+                      </span>
+                    )}
+                    {release.status === 'sent-for-review' && (
+                      <span
+                        className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.7)', color: COLORS.primary }}
+                      >
+                        <Clock className="h-3 w-3" />
+                        In Review
+                      </span>
+                    )}
+                    {release.status === 'needs-attention' && (
+                      <span
+                        className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.7)', color: COLORS.warning }}
+                      >
+                        <AlertTriangle className="h-3 w-3" />
+                        Needs Attention
+                      </span>
+                    )}
+                    {release.status === 'delivered' && (
+                      <span
+                        className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+                        style={{ backgroundColor: 'rgba(0,0,0,0.7)', color: COLORS.success }}
+                      >
+                        <Check className="h-3 w-3" />
+                        Live
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Release Info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate" style={{ color: COLORS.textWhite }}>
+                <div className="p-4">
+                  <p className="font-semibold text-lg truncate" style={{ color: COLORS.textWhite }}>
                     {release.title}
                   </p>
-                  <p className="text-sm truncate" style={{ color: COLORS.textGray }}>
+                  <p className="text-sm truncate mt-1" style={{ color: COLORS.textGray }}>
                     {release.artist} • {release.type === 'album' ? 'Album' : 'Single'}
                   </p>
-                </div>
 
-                {/* Status Badge */}
-                <div className="flex items-center gap-2">
-                  {release.status === 'draft' && (
-                    <span
-                      className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                      style={{ backgroundColor: COLORS.bgCard, color: COLORS.textGray }}
-                    >
-                      <Clock className="h-3 w-3" />
-                      Draft
-                    </span>
-                  )}
-                  {release.status === 'sent-for-review' && (
-                    <span
-                      className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                      style={{ backgroundColor: `${COLORS.primary}20`, color: COLORS.primary }}
-                    >
-                      <Clock className="h-3 w-3" />
-                      In Review
-                    </span>
-                  )}
-                  {release.status === 'needs-attention' && (
-                    <span
-                      className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                      style={{ backgroundColor: `${COLORS.warning}20`, color: COLORS.warning }}
-                    >
-                      <AlertTriangle className="h-3 w-3" />
-                      Needs Attention
-                    </span>
-                  )}
-                  {release.status === 'delivered' && (
-                    <span
-                      className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                      style={{ backgroundColor: `${COLORS.success}20`, color: COLORS.success }}
-                    >
-                      <Check className="h-3 w-3" />
-                      Live
-                    </span>
-                  )}
+                  {/* Action Button */}
+                  <div className="mt-4">
+                    {release.status === 'draft' && (
+                      <button
+                        type="button"
+                        className="w-full text-sm font-medium px-4 py-2.5 rounded-[3px] transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: COLORS.primary, color: COLORS.textWhite }}
+                      >
+                        Resume
+                      </button>
+                    )}
+                    {release.status === 'needs-attention' && (
+                      <button
+                        type="button"
+                        className="w-full text-sm font-medium px-4 py-2.5 rounded-[3px] transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: COLORS.warning, color: '#000' }}
+                      >
+                        Fix Issues
+                      </button>
+                    )}
+                    {release.status === 'delivered' && (
+                      <button
+                        type="button"
+                        className="w-full text-sm font-medium px-4 py-2.5 rounded-[3px] transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: COLORS.bgCard, color: COLORS.textWhite, border: `1px solid ${COLORS.borderGray}` }}
+                      >
+                        View
+                      </button>
+                    )}
+                    {release.status === 'sent-for-review' && (
+                      <button
+                        type="button"
+                        className="w-full text-sm font-medium px-4 py-2.5 rounded-[3px] transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: COLORS.bgCard, color: COLORS.textWhite, border: `1px solid ${COLORS.borderGray}` }}
+                      >
+                        View Details
+                      </button>
+                    )}
+                  </div>
                 </div>
-
-                {/* Action Button */}
-                {release.status === 'draft' && (
-                  <button
-                    type="button"
-                    className="text-sm font-medium px-4 py-2 rounded-[3px] transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: COLORS.primary, color: COLORS.textWhite }}
-                  >
-                    Resume
-                  </button>
-                )}
-                {release.status === 'needs-attention' && (
-                  <button
-                    type="button"
-                    className="text-sm font-medium px-4 py-2 rounded-[3px] transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: COLORS.warning, color: '#000' }}
-                  >
-                    Fix Issues
-                  </button>
-                )}
-                {release.status === 'delivered' && (
-                  <button
-                    type="button"
-                    className="text-sm font-medium px-4 py-2 rounded-[3px] transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: COLORS.bgCard, color: COLORS.textWhite }}
-                  >
-                    View
-                  </button>
-                )}
               </div>
             ))}
 
@@ -756,6 +761,7 @@ export default function HomePage() {
         className="rounded-[3px] p-6"
         style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.borderGray}` }}
       >
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold uppercase tracking-wide" style={{ color: COLORS.textWhite }}>
             Analytics
@@ -769,62 +775,13 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="p-4 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }}>
-            <div className="flex items-center gap-2 mb-1">
-              <Play className="h-4 w-4" style={{ color: COLORS.primary }} />
-              <span className="text-xs uppercase" style={{ color: COLORS.textGray }}>Streams</span>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: COLORS.textWhite }}>
-              {MOCK_ANALYTICS.totalStreams.toLocaleString()}
-            </p>
-          </div>
-          <div className="p-4 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }}>
-            <div className="flex items-center gap-2 mb-1">
-              <User className="h-4 w-4" style={{ color: COLORS.primary }} />
-              <span className="text-xs uppercase" style={{ color: COLORS.textGray }}>Listeners</span>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: COLORS.textWhite }}>
-              {MOCK_ANALYTICS.monthlyListeners.toLocaleString()}
-            </p>
-          </div>
-          <div className="p-4 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }}>
-            <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="h-4 w-4" style={{ color: COLORS.primary }} />
-              <span className="text-xs uppercase" style={{ color: COLORS.textGray }}>Saves</span>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: COLORS.textWhite }}>
-              {MOCK_ANALYTICS.saves.toLocaleString()}
-            </p>
-          </div>
-          <div className="p-4 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }}>
-            <div className="flex items-center gap-2 mb-1">
-              <Music className="h-4 w-4" style={{ color: COLORS.primary }} />
-              <span className="text-xs uppercase" style={{ color: COLORS.textGray }}>Playlists</span>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: COLORS.textWhite }}>
-              {MOCK_ANALYTICS.playlistAdds}
-            </p>
-          </div>
+        {/* KPI Cards from Analytics page */}
+        <div className="mb-6">
+          <KPICards kpis={mockKPIs} />
         </div>
 
-        {/* Simple Chart */}
-        <div
-          className="h-48 rounded-[3px] flex items-end justify-around px-4 pb-4"
-          style={{ backgroundColor: `${COLORS.primary}10` }}
-        >
-          {[40, 65, 45, 80, 55, 70, 50, 85, 60, 75, 55, 90].map((height, i) => (
-            <div
-              key={i}
-              className="w-6 rounded-t transition-all hover:opacity-80"
-              style={{
-                height: `${height}%`,
-                backgroundColor: COLORS.primary,
-              }}
-            />
-          ))}
-        </div>
+        {/* Performance Over Time Chart from Analytics page */}
+        <MetricsChart data={mockTimeSeriesData} />
       </div>
     );
   };
@@ -955,85 +912,11 @@ export default function HomePage() {
     );
   };
 
-  // Blurred analytics placeholder for non-delivered states
-  const renderAnalyticsPlaceholder = () => {
-    if (showAnalytics) return null;
+  // Journey to 1000 streams banner for in-review state
+  const renderJourneyBanner = () => {
+    if (!showAnalyticsPlaceholder) return null;
 
-    return (
-      <div className="relative">
-        {/* Blurred Analytics Background */}
-        <div
-          className="rounded-[3px] p-6 blur-sm opacity-50 select-none pointer-events-none"
-          style={{ backgroundColor: COLORS.bgCard }}
-        >
-          {/* Fake Analytics Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2
-              className="text-xl font-bold uppercase tracking-wide"
-              style={{ color: COLORS.textWhite }}
-            >
-              Analytics
-            </h2>
-            <div className="flex gap-2">
-              <div className="h-8 w-24 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }} />
-              <div className="h-8 w-24 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }} />
-            </div>
-          </div>
-
-          {/* Fake Stats Row */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="p-4 rounded-[3px]" style={{ backgroundColor: COLORS.bgDark }}>
-                <div className="h-4 w-16 rounded mb-2" style={{ backgroundColor: COLORS.borderGray }} />
-                <div className="h-8 w-24 rounded" style={{ backgroundColor: COLORS.borderGray }} />
-              </div>
-            ))}
-          </div>
-
-          {/* Fake Chart Area */}
-          <div
-            className="h-64 rounded-[3px] flex items-end justify-around px-4 pb-4"
-            style={{ backgroundColor: `${COLORS.primary}15` }}
-          >
-            {[40, 65, 45, 80, 55, 70, 50, 85, 60, 75, 55, 90].map((height, i) => (
-              <div
-                key={i}
-                className="w-8 rounded-t"
-                style={{
-                  height: `${height}%`,
-                  backgroundColor: COLORS.primary,
-                  opacity: 0.6,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Overlay Dialog */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="rounded-[3px] p-8 max-w-md w-full mx-4"
-            style={{ backgroundColor: '#000000' }}
-          >
-            <h2
-              className="text-2xl font-bold uppercase tracking-wide mb-3"
-              style={{ color: COLORS.textWhite }}
-            >
-              Nothing to See... Yet
-            </h2>
-            <p className="text-sm mb-6" style={{ color: COLORS.textGray }}>
-              You haven&apos;t distributed any releases yet. Upload and distribute some music to start tracking streams and more.
-            </p>
-            <Link
-              href="/onboarding/release-type"
-              className="inline-block w-full text-center rounded-[3px] px-6 py-3 text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors"
-            >
-              Create your first release
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return <JourneyBanner showLearnMore />;
   };
 
   return (
@@ -1097,16 +980,18 @@ export default function HomePage() {
           const isExpanded = isCurrent;
           const Icon = milestone.icon;
 
+          // Account info stays small, payout+tax and release get equal larger sizes
+          const isAccountInfo = milestone.id === 'account-info';
+          const flexClass = isExpanded ? 'flex-[3]' : isAccountInfo ? 'flex-none' : 'flex-1';
+
           return (
             <div
               key={milestone.id}
-              className={`rounded-[3px] overflow-hidden transition-all duration-300 ${
-                isExpanded ? 'flex-[6]' : 'flex-none'
-              }`}
+              className={`rounded-[3px] overflow-hidden transition-all duration-300 ${flexClass}`}
               style={{
                 backgroundColor: COLORS.bgCard,
                 border: `1px solid ${isCurrent ? COLORS.primary : COLORS.borderGray}`,
-                width: isExpanded ? 'auto' : '160px',
+                ...(isAccountInfo && !isExpanded ? { width: '160px' } : {}),
               }}
             >
               {/* Collapsed State - Completed or Upcoming */}
@@ -1153,12 +1038,23 @@ export default function HomePage() {
                   <p className="text-xs mt-1" style={{ color: COLORS.textGray }}>
                     {milestone.description}
                   </p>
-                  <span
-                    className="text-xs font-medium mt-3 px-3 py-1 rounded-full"
-                    style={{ backgroundColor: COLORS.bgDark, color: COLORS.textGray }}
-                  >
-                    Up Next
-                  </span>
+                  {/* Show CTA for release milestone, "Up Next" badge for others */}
+                  {milestone.id === 'release' ? (
+                    <Link
+                      href="/onboarding/release-type"
+                      className="mt-3 px-4 py-2 rounded-[3px] text-xs font-medium transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: COLORS.primary, color: COLORS.textWhite }}
+                    >
+                      Start a Release
+                    </Link>
+                  ) : (
+                    <span
+                      className="text-xs font-medium mt-3 px-3 py-1 rounded-full"
+                      style={{ backgroundColor: COLORS.bgDark, color: COLORS.textGray }}
+                    >
+                      Up Next
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -1201,6 +1097,13 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* Balance/Earnings Module - At the top for delivered state */}
+      {showBalance && (
+        <div className="mt-6">
+          {renderBalanceModule()}
+        </div>
+      )}
+
       {/* Release Catalog - For has-draft, in-review, delivered states */}
       {showReleaseCatalog && (
         <div className="mt-6">
@@ -1215,16 +1118,9 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Balance Module - Only for delivered state */}
-      {showBalance && (
-        <div className="mt-6">
-          {renderBalanceModule()}
-        </div>
-      )}
-
       {/* Analytics Placeholder with Overlay - For non-delivered states */}
       <div className="mt-6">
-        {renderAnalyticsPlaceholder()}
+        {renderJourneyBanner()}
       </div>
 
       {/* Resources Section - Always shown, content varies by state */}

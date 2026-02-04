@@ -24,13 +24,8 @@ import {
   CardTitle,
 } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/shadcn/button';
-
-// Helper function to add basePath for production
-const getAssetPath = (path: string) => {
-  const basePath =
-    process.env.NODE_ENV === 'production' ? '/cd-baby-member-app' : '';
-  return `${basePath}${path}`;
-};
+import { JourneyBanner } from '@/shared/components/journey-banner';
+import { getAssetPath } from '@/shared/utils/asset-path';
 
 interface Milestone {
   range: string;
@@ -135,7 +130,6 @@ export function EmptyState({ onComplete }: EmptyStateProps) {
 
   const currentStreams = calculateStreamsFromMilestones();
   const goalStreams = 1000;
-  const progressPercentage = (currentStreams / goalStreams) * 100;
 
   const milestones: Milestone[] = [
     {
@@ -230,56 +224,12 @@ export function EmptyState({ onComplete }: EmptyStateProps) {
   return (
     <div className="space-y-8">
       {/* Hero Section - Journey to 1k */}
-      <Card className="border-0" style={{ backgroundColor: '#61113A' }}>
-        <CardContent className="p-8">
-          <div className="flex items-start gap-6">
-            <img
-              src="/assets/cd.png"
-              alt="CD"
-              className="h-12 w-12 flex-shrink-0"
-            />
-            <div className="flex-1">
-              <h2 className="mb-2 text-3xl font-[var(--font-test-national-2-narrow)] font-bold">
-                Your Journey to 1,000 Streams
-              </h2>
-              <p className="text-muted-foreground mb-6 text-lg">
-                Reach 1,000 streams and join the top 13% of tracks on Spotify.
-                This milestone unlocks monetization and proves your music
-                resonates with listeners.
-              </p>
-
-              {/* Progress Bar */}
-              <div className="mb-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium">Progress</span>
-                  <span className="text-sm font-medium text-[var(--cdbaby-light-blue)]">
-                    {currentStreams} / {goalStreams} streams
-                  </span>
-                </div>
-                <div className="bg-muted h-3 w-full overflow-hidden rounded-full">
-                  <div
-                    className="h-full transition-all duration-500"
-                    style={{
-                      width: `${Math.max(2, progressPercentage)}%`,
-                      backgroundColor: '#ff386a',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Milestone Progress */}
-              <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <Sparkles className="h-4 w-4" style={{ color: '#ff386a' }} />
-                <span>
-                  {completedMilestones === 0
-                    ? "Ready to start your journey? Let's get your first streams!"
-                    : `${completedMilestones} of ${milestones.length} milestones completed`}
-                </span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <JourneyBanner
+        currentStreams={currentStreams}
+        goalStreams={goalStreams}
+        completedMilestones={completedMilestones}
+        totalMilestones={milestones.length}
+      />
 
       {/* Interactive Roadmap with Embedded Checklists */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
