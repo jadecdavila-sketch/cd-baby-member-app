@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Disc3, Music, Package, Tag, X } from 'lucide-react';
+import { ArrowLeft, Disc3, Music, Package, Rocket, Tag, X } from 'lucide-react';
 
 import { Header } from '@/modules/header/header';
 import { COLORS } from '@/shared/constants/theme';
@@ -35,6 +35,7 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const releaseType = searchParams.get('releaseType') as 'album' | 'single' | 'bundle' | null;
+  const hasBoost = searchParams.get('boost') === 'true';
   const firstName = searchParams.get('firstName') || '';
   const lastName = searchParams.get('lastName') || '';
 
@@ -42,6 +43,7 @@ function CheckoutContent() {
   const [discountCode, setDiscountCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number } | null>(null);
   const [discountError, setDiscountError] = useState('');
+  const [showDiscountField, setShowDiscountField] = useState(false);
 
   // Generate order ID
   const [orderId] = useState(
@@ -51,8 +53,10 @@ function CheckoutContent() {
 
   const releaseInfo = releaseType ? RELEASE_TYPE_INFO[releaseType] : null;
   const basePrice = releaseInfo?.price ?? 0;
+  const boostPrice = hasBoost ? 39.99 : 0;
+  const subtotal = basePrice + boostPrice;
   const discountAmount = appliedDiscount?.amount ?? 0;
-  const total = Math.max(0, basePrice - discountAmount);
+  const total = Math.max(0, subtotal - discountAmount);
 
   const handleBack = () => {
     router.back();
@@ -143,7 +147,7 @@ function CheckoutContent() {
               {/* Left Column - Payment */}
               <div className="space-y-6">
                 <CheckoutStep
-                  releaseType={releaseType}
+                  total={total}
                   onSubmit={() => setStep('confirmation')}
                 />
 
@@ -171,31 +175,53 @@ function CheckoutContent() {
                   </h2>
 
                   {/* Product */}
-                  <div className="flex items-center gap-4 py-4 border-t border-b" style={{ borderColor: COLORS.borderGray }}>
-                    <div
-                      className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
-                      style={{ backgroundColor: `${COLORS.primary}20` }}
-                    >
-                      <Icon className="h-6 w-6" style={{ color: COLORS.primary }} />
-                    </div>
-                    <div className="flex-1">
+                  <div className="py-4 border-t border-b space-y-4" style={{ borderColor: COLORS.borderGray }}>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
+                        style={{ backgroundColor: `${COLORS.primary}20` }}
+                      >
+                        <Icon className="h-6 w-6" style={{ color: COLORS.primary }} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium" style={{ color: COLORS.textWhite }}>
+                          {releaseInfo.title} Distribution
+                        </p>
+                        <p className="text-sm" style={{ color: COLORS.textGray }}>
+                          {releaseInfo.subtitle}
+                        </p>
+                      </div>
                       <p className="font-medium" style={{ color: COLORS.textWhite }}>
-                        {releaseInfo.title} Distribution
-                      </p>
-                      <p className="text-sm" style={{ color: COLORS.textGray }}>
-                        {releaseInfo.subtitle}
+                        ${basePrice.toFixed(2)}
                       </p>
                     </div>
-                    <p className="font-medium" style={{ color: COLORS.textWhite }}>
-                      ${basePrice.toFixed(2)}
-                    </p>
+
+                    {/* Boost Add-on */}
+                    {hasBoost && (
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
+                          style={{ backgroundColor: '#F9D84E20' }}
+                        >
+                          <Rocket className="h-6 w-6" style={{ color: '#F9D84E' }} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium" style={{ color: COLORS.textWhite }}>
+                            Boost
+                          </p>
+                          <p className="text-sm" style={{ color: COLORS.textGray }}>
+                            Premium promotion
+                          </p>
+                        </div>
+                        <p className="font-medium" style={{ color: '#F9D84E' }}>
+                          ${boostPrice.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Discount Code */}
                   <div className="space-y-2">
-                    <label htmlFor="discount-code" className="text-sm font-medium" style={{ color: COLORS.textWhite }}>
-                      Discount Code
-                    </label>
                     {appliedDiscount ? (
                       <div
                         className="flex items-center justify-between rounded-[3px] border px-4 py-3"
@@ -219,38 +245,50 @@ function CheckoutContent() {
                           <X className="h-4 w-4" style={{ color: COLORS.textGray }} />
                         </button>
                       </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          id="discount-code"
-                          value={discountCode}
-                          onChange={(e) => {
-                            setDiscountCode(e.target.value);
-                            setDiscountError('');
-                          }}
-                          placeholder="Enter code"
-                          className="flex-1 rounded-[3px] border px-4 py-2.5 text-sm focus:outline-none focus:ring-2"
-                          style={{
-                            backgroundColor: COLORS.bgInput,
-                            borderColor: discountError ? '#ef4444' : COLORS.borderGray,
-                            color: COLORS.textWhite,
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyDiscount}
-                          className="rounded-[3px] px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-                          style={{ backgroundColor: COLORS.borderGray, color: COLORS.textWhite }}
-                        >
-                          Apply
-                        </button>
+                    ) : showDiscountField ? (
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            id="discount-code"
+                            value={discountCode}
+                            onChange={(e) => {
+                              setDiscountCode(e.target.value);
+                              setDiscountError('');
+                            }}
+                            placeholder="Enter code"
+                            className="flex-1 rounded-[3px] border px-4 py-2.5 text-sm focus:outline-none focus:ring-2"
+                            style={{
+                              backgroundColor: COLORS.bgInput,
+                              borderColor: discountError ? '#ef4444' : COLORS.borderGray,
+                              color: COLORS.textWhite,
+                            }}
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleApplyDiscount}
+                            className="rounded-[3px] px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
+                            style={{ backgroundColor: COLORS.borderGray, color: COLORS.textWhite }}
+                          >
+                            Apply
+                          </button>
+                        </div>
+                        {discountError && (
+                          <p className="text-xs" style={{ color: '#ef4444' }}>
+                            {discountError}
+                          </p>
+                        )}
                       </div>
-                    )}
-                    {discountError && (
-                      <p className="text-xs" style={{ color: '#ef4444' }}>
-                        {discountError}
-                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowDiscountField(true)}
+                        className="text-sm transition-opacity hover:opacity-70"
+                        style={{ color: COLORS.textGray }}
+                      >
+                        Have a discount code?
+                      </button>
                     )}
                   </div>
 
@@ -258,7 +296,7 @@ function CheckoutContent() {
                   <div className="space-y-2 pt-2">
                     <div className="flex justify-between text-sm">
                       <span style={{ color: COLORS.textGray }}>Subtotal</span>
-                      <span style={{ color: COLORS.textWhite }}>${basePrice.toFixed(2)}</span>
+                      <span style={{ color: COLORS.textWhite }}>${subtotal.toFixed(2)}</span>
                     </div>
                     {appliedDiscount && (
                       <div className="flex justify-between text-sm">

@@ -14,7 +14,6 @@ export default function OnboardingPage() {
   // Info step state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: COLORS.bgDark }}>
@@ -26,8 +25,6 @@ export default function OnboardingPage() {
             setFirstName={setFirstName}
             lastName={lastName}
             setLastName={setLastName}
-            agreedToTerms={agreedToTerms}
-            setAgreedToTerms={setAgreedToTerms}
             onGoToDashboard={() => router.push('/home')}
           />
         </div>

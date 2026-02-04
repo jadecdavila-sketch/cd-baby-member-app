@@ -11,8 +11,6 @@ interface InfoStepProps {
   setFirstName: (value: string) => void;
   lastName: string;
   setLastName: (value: string) => void;
-  agreedToTerms: boolean;
-  setAgreedToTerms: (value: boolean) => void;
   onGoToDashboard: () => void;
 }
 
@@ -90,8 +88,6 @@ export function InfoStep({
   setFirstName,
   lastName,
   setLastName,
-  agreedToTerms,
-  setAgreedToTerms,
   onGoToDashboard,
 }: InfoStepProps) {
   const router = useRouter();
@@ -127,8 +123,8 @@ export function InfoStep({
     detectLocation();
   }, []);
 
-  // Basic validation for name, terms, and country
-  const isBasicValid = firstName.trim() && lastName.trim() && agreedToTerms && country;
+  // Basic validation for name and country
+  const isBasicValid = firstName.trim() && lastName.trim() && country;
 
   const handleStartRelease = () => {
     if (isBasicValid) {
@@ -314,34 +310,6 @@ export function InfoStep({
               />
             </div>
           )}
-        </div>
-
-        {/* Terms of Service Section */}
-        <div className="space-y-3">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={agreedToTerms}
-              onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-gray-600 bg-transparent"
-              style={{ accentColor: COLORS.primary }}
-            />
-            <span className="text-sm leading-relaxed" style={{ color: COLORS.textGray }}>
-              I have read, understood, and agree to the{' '}
-              <a href="#" className="underline" style={{ color: COLORS.primary }}>
-                Terms of Service
-              </a>
-              ,{' '}
-              <a href="#" className="underline" style={{ color: COLORS.primary }}>
-                Privacy Policy
-              </a>
-              ,{' '}
-              <a href="#" className="underline" style={{ color: COLORS.primary }}>
-                CD Baby Artist Agreement
-              </a>
-              , and I am at least 13 years old.
-            </span>
-          </label>
         </div>
 
         {/* CTA Buttons */}

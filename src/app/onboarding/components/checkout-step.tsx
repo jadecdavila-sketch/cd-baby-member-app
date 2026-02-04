@@ -6,18 +6,16 @@ import { ChevronDown, CreditCard, Lock } from 'lucide-react';
 import { COLORS } from '@/shared/constants/theme';
 
 interface CheckoutStepProps {
-  releaseType: 'album' | 'single' | 'bundle';
+  total: number;
   onSubmit: () => void;
 }
 
-export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
+export function CheckoutStep({ total, onSubmit }: CheckoutStepProps) {
   const [expandedSection, setExpandedSection] = useState<'cards' | 'paypal' | null>('cards');
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [securityCode, setSecurityCode] = useState('');
   const [nameOnCard, setNameOnCard] = useState('');
-
-  const basePrice = releaseType === 'bundle' ? 19.99 : releaseType === 'album' ? 14.99 : 9.99;
 
   const isCardValid =
     cardNumber.replace(/\s/g, '').length >= 15 &&
@@ -264,7 +262,7 @@ export function CheckoutStep({ releaseType, onSubmit }: CheckoutStepProps) {
               }}
             >
               <Lock className="h-4 w-4" />
-              <span>Pay ${basePrice.toFixed(2)}</span>
+              <span>Pay ${total.toFixed(2)}</span>
             </button>
           </form>
         )}
