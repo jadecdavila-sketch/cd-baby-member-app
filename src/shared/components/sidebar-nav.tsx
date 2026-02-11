@@ -13,6 +13,7 @@ const navItems = [
   { href: '/releases', icon: '2-releases.svg', label: 'Releases' },
   { href: '/analytics', icon: '3-analytics.svg', label: 'Analytics' },
   { href: '/earnings', icon: '4-earnings.svg', label: 'Earnings' },
+  { href: '/tools', icon: '5-tools.svg', label: 'Tools & Promotions' },
 ];
 
 export function SidebarNav() {
